@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container" style="padding-top: 50px;">
+
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+              <div class="d-flex justify-content-center py-4">
+                <a href="index.html" class="logo d-flex align-items-center w-auto">
+                </a>
+              </div><!-- End Logo -->
+
+              <div class="card mb-3">
+                <div class="card-body">
+
+                  <div class="pt-4 pb-2">
+                    <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
+                    <p class="text-center small">Enter your personal details to create account</p>
+                  </div>
+
+              
+                  <form class="row g-3 needs-validation" novalidate action="{{ url_for('account_page.register')}}" method="post">
+                    
+                    <!-- Username Input -->
+                    <div class="col-12">
+                      <label for="yourName" class="form-label">Username</label>
+                      <input type="text" id="user_name" name="user_name" class="form-control" value="{{ request.form.user_name|default('') }}" required pattern="^[a-zA-Z0-9_]{3,}$" title="Username must be at least 3 characters long and only contain letters, numbers, and underscores.">
+                    </div>
+
+                     <!-- Password Input -->
+                    <div class="col-12">
+                        <label for="yourPassword" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and have a mix of character types." required>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="col-12">
+                        <label for="title" class="form-label">Title</label>
+                        <select class="form-select" id="title" name="title" required>
+                            <option value="">Title</option>
+                            <option value="Mr">Mr.</option>
+                            <option value="Mrs">Mrs.</option>
+                            <option value="Miss">Miss.</option>
+                            <option value="Ms">Ms.</option>
+                        </select>
+                    </div>
+
+                    <!-- First Name Input -->
+                    <div class="col-12">
+                        <label for="first_name" class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-control" pattern="[A-Za-z ]+" title="First name must contain only letters and spaces." value="{{ request.form.first_name|default('') }}" required>
+                    </div>
+
+                    <!-- Last Name Input -->
+                    <div class="col-12">
+                        <label for="last_name" class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-control"  pattern="[A-Za-z ]+" title="Last name must contain only letters and spaces." value="{{ request.form.last_name|default('') }}" required>
+                    </div>
+
+                    <!-- Position Input -->
+                    <div class="col-12">
+                        <label for="position" class="form-label">Position</label>
+                        <input type="text" name="position" class="form-control"  pattern="[A-Za-z ]+" title="Last name must contain only letters and spaces." value="{{ request.form.position|default('') }}" required>
+                    </div>
+
+                    <!-- Phone No Input -->
+                    <div class="col-12">
+                      <label for="phone_number" class="form-label">Phone </label>
+                      <input type="tel" name="phone_number" class="form-control" pattern="[\d\s\-\+\(\)]{5,}" title="Phone number must be at least 5 characters long and in a valid format." value="{{ request.form.phone_number|default('') }}" required>
+                    </div>
+
+
+                    <!-- Email Input -->
+                    <div class="col-12">
+                      <label for="yourEmail" class="form-label">Your Email</label>
+                      <input type="email" name="email" class="form-control" value="{{ request.form.email|default('') }}" required>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-12">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" name="address" class="form-control" value="{{ request.form.address|default('') }}" required>
+                    </div>
+
+                    <!-- Date of Birth -->
+                    <div class="col-12">
+                        <label for="date_of_birth" class="form-label">Date Of Birth</label>
+                        <input type="date" name="date_of_birth" class="form-control" placeholder="date_of_birth" value="{{ request.form.date_of_birth|default('') }}" required>
+                    </div>
+
+                    <!-- Checkbox for Student or Community Card Holder -->
+                    <div class="col-12">
+                      <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="is_student_or_csc" id="is_student_or_csc" {% if request.form.is_student_or_csc %}checked{% endif %}>
+                          <label class="form-check-label" for="is_student_or_csc">
+                              I am a Student/CSC holders.
+                          </label>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100 button-custom" type="submit">Create Account</button>
+                    </div>
+                    <div class="col-12">
+                      <p class="small mb-0">Already have an account? <a href="{{ url_for('account_page.login') }}">Log in</a></p>
+                    </div>
+                  </form>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main><!-- End #main -->
+{% endblock %}

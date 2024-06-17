@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+{% block title %}Add lesson{% endblock %}
+
+{% block content %}
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Add New Lesson</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('schedule_page.manage_lessons') }}">Manage Lessons</a></li>
+          <li class="breadcrumb-item active">Add Lesson</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+  
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+  
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Lesson Details</h5>
+  
+              <!-- Lesson Form -->
+              <form action="{{ url_for('schedule_page.add_lesson') }}" method="post">
+                <div class="row mb-3">
+                  <label for="lessonName" class="col-sm-2 col-form-label">Lesson Name</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="lessonName" name="lessonName" required>
+                  </div>
+                </div>
+                
+                <!-- Instructor Field -->
+                {% if session['role'] == 'Manager' %}
+                <div class="row mb-3">
+                  <label for="instructorId" class="col-sm-2 col-form-label">Instructor</label>
+                  <div class="col-sm-10">
+                    <select class="form-select" id="instructorId" name="instructorId" required>
+                      <option selected disabled>Choose...</option>
+                      {% for instructor in instructors %}
+                      <option value="{{ instructor.instructor_id }}">{{ instructor.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                {% endif %}
+  
+                <div class="row mb-3">
+                  <label for="locationId" class="col-sm-2 col-form-label">Location</label>
+                  <div class="col-sm-10">
+                    <select class="form-select" id="locationId" name="locationId" required>
+                      <option selected disabled>Choose...</option>
+                      {% for location in locations %}
+                      <option value="{{ location.location_id }}">{{ location.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+  
+                <div class="row mb-3">
+                  <label for="date" class="col-sm-2 col-form-label">Date</label>
+                  <div class="col-sm-10">
+                    <input type="date" class="form-control" id="date" name="date" required>
+                  </div>
+                </div>
+  
+                <div class="row mb-3">
+                  <label for="startTime" class="col-sm-2 col-form-label">Start Time</label>
+                  <div class="col-sm-10">
+                    <input type="time" class="form-control" id="startTime" name="startTime" required>
+                  </div>
+                </div>
+  
+                <div class="row mb-3">
+                  <label for="endTime" class="col-sm-2 col-form-label">End Time</label>
+                  <div class="col-sm-10">
+                    <input type="time" class="form-control" id="endTime" name="endTime" required>
+                  </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <label for="type" class="col-sm-2 col-form-label">Type</label>
+                    <div class="col-sm-10">
+                      <select name="type" class="form-select" id="type" required>
+                        <option value="">Select a Type</option>
+                        {% for type in lesson_types %}
+                            <option value="{{ type.type }}" >
+                                {{ type.type }}
+                            </option>
+                        {% endfor %}
+                      </select> 
+                    </div>
+                </div>
+  
+                <div class="row mb-3">
+                    <label for="details" class="col-sm-2 col-form-label">Details</label>
+                    <div class="col-sm-10">
+                    <textarea class="form-control" id="details" name="details" required></textarea>
+                    </div>
+                </div>
+  
+                <div class="row mb-3">
+                    <label for="price" class="col-sm-2 col-form-label">Price/h</label>
+                    <div class="col-sm-10">
+                    <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-10 offset-sm-2">
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </div>
+              </form><!-- End Lesson Form -->
+  
+            </div>
+          </div>
+  
+        </div>
+      </div>
+    </section>
+  
+  </main><!-- End #main -->
+
+  {% endblock %}

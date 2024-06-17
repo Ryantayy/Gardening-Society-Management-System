@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<h2>Profile Page</h2>
+<div>
+    <p>Your account details are below:</p>
+    <form action="/changeManagerProfile" method="post">
+        <input type="hidden" id="username" name="username" value="{{ usernameM[1] }}">
+        <table>
+            <tr>
+                <td>Username:</td>
+                <td>{{ usenameM[1] }}</td> 
+            </tr>
+            <tr>
+                <td>Title:</td>
+                <td><input type="text" name="title" id="title" value="{{ usernameM[2] }}"></td>
+            </tr>
+            <tr>
+                <td>First Name:</td>
+                <td><input type="text" name="firstName" id="firstName" value="{{ usernameM[3] }}"></td>
+            </tr>
+            <tr>
+                <td>Family Name:</td>
+                <td><input type="text" name="lastName" id="lastName" value="{{ usernameM[4] }}"></td>
+            </tr>
+            <tr>
+                <td>Position:</td>
+                <td><input type="text" name="position" id="position" value="{{ usernameM[5] }}"></td>
+            </tr>
+            <tr>
+                <td>Phone Number:</td>
+                <td><input type="tel" name="phoneNumber" id="phoneNumber" value="{{ usernameM[6] }}"></td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td><input type="email" name="email" id="email" value="{{ usernameM[7] }}"></td>
+            </tr>
+
+            <tr>
+                <td>Password:</td>
+                <td><input type="password" name="password" id="password"  ></td> 
+            </tr>
+        </table>
+
+        <button type="submit">Submit</button>
+        <div class="msg">{{ msg }}</div>
+    </form>
+</div>
+
+{% endblock %}

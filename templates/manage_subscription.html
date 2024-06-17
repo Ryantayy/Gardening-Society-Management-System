@@ -1,0 +1,257 @@
+
+{% extends "layout.html" %}
+{% block title %}Manage Subscription{% endblock %}
+
+{% block content %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Manage Subscription</h1>
+      <nav>
+        <ol class="breadcrumb">
+          {% if session['role'] == 'Member'%}
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item active">Subscription</li>
+          {% elif session['role'] == 'Manager' %}
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item active"><a href="{{ url_for('subscription_page.member_subscriptionlist') }}">Member Subscription List</a></li>
+          <li class="breadcrumb-item active">Subscription</li>
+          {% endif %}
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section profile">
+      <div class="row">
+        <div class="col-xl-4">
+          <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+              {% if profile.profile_image %}
+                <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Profile Image">
+              {% else %}
+                <img src="{{ url_for('static', filename='assets/img/profile-img.png') }}" class="img-fluid" alt="Profile Image">
+              {% endif %}
+              <h2> {{ profile.first_name }} </h2>
+              <h3> {{ profile.last_name }} </h3>
+              <div class="social-links mt-2">
+                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-xl-8">
+
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                </li>
+
+                <!-- Payment History -->
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#payment-history">Payment History</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#manage-subscription">Manage Subscription</button>
+                </li>
+
+              </ul>
+
+              <!-- Tab Content -->
+              <div class="tab-content pt-2">
+
+                <!-- Tab for Subscription Overview -->
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  <h5 class="card-title">Subscription Details</h5>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Subscription Date</div>
+                    <div class="col-lg-9 col-md-8"> {{ subscription.start_date }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Expiry Date</div>
+                    <div class="col-lg-9 col-md-8"> {{ subscription.end_date }}</div>
+                  </div>
+                    
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Type</div>
+                    <div class="col-lg-9 col-md-8"> {{ subscription.type }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Status</div>
+                    <div class="col-lg-9 col-md-8"> {{ subscription.status }}</div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Price/Billing Cycle</div>
+                    <div class="col-lg-9 col-md-8"> ${{ subscription.price }}</div>
+                  </div>
+                  
+                  {% if session['role'] == 'Manager' %}
+                  <div class="text-end">
+                    <form action="{{ url_for('subscription_page.manage_user_subscription', user_id=subscription.user_id) }}" method="post">
+                      <input type="hidden" name="send_reminder" value="true">
+                      <button type="submit" class="btn btn-primary btn-sm">Send Expiration Reminder</button>
+                    </form>
+                  </div>
+                  {% endif %}
+                </div> 
+                
+                <!-- Payment History Tab Pane -->
+                <div class="tab-pane fade pt-3" id="payment-history">
+                  <h5 class="card-title">Payment History</h5>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Date</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Type</th>
+                          <th scope="col">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% if payment_history %}
+                          {% for payment in payment_history %}
+                            <tr>
+                              <td>{{ payment.payment_date }}</td>
+                              <td>${{ payment.amount }}</td>
+                              <td>{{ payment.payment_type }}</td>
+                              <td>{{ payment.status }}</td>
+                            </tr>
+                          {% endfor %}
+                        {% else %}
+                          <tr>
+                            <td colspan="4">No payment history found.</td>
+                          </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div> <!-- End Payment History Tab Pane -->
+
+                <!-- Manage Subscription -->
+                <div class="tab-pane fade manage-subscription pt-3" id="manage-subscription">
+                  
+                  {% if session['role'] == 'Member' %}
+                  <form action="{{ url_for('subscription_page.manage_subscription') }}" method="POST">      
+                  {% elif session['role'] == 'Manager' %}
+                  <form action="{{ url_for('subscription_page.manage_user_subscription', user_id=subscription.user_id) }}" method="POST">
+                  {% endif %}              
+                    
+                    {% if session['role'] == 'Member' %}
+                    <div class="row mb-3">
+                      <label for="start_date" class="col-md-4 col-lg-3 col-form-label">Subscription Date</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="start_date" type="date" class="form-control" id="start_date" value="{{ subscription.start_date }}" readonly>
+                      </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                      <label for="end_date" class="col-md-4 col-lg-3 col-form-label">Expiry Date</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="end_date" type="date" class="form-control" id="end_date" value="{{ subscription.end_date }}" readonly>
+                      </div>
+                    </div>
+
+                    {% elif session['role'] == 'Manager' %}
+                    <div class="row mb-3">
+                      <label for="start_date" class="col-md-4 col-lg-3 col-form-label">Subscription Date</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="start_date" type="date" class="form-control" id="start_date" value="{{ subscription.start_date }}">
+                      </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                      <label for="end_date" class="col-md-4 col-lg-3 col-form-label">Expiry Date</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="end_date" type="date" class="form-control" id="end_date" value="{{ subscription.end_date }}">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="status" class="col-md-4 col-lg-3 col-form-label">Status</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="status" class="form-control" id="status">
+                          <option value="Active" {% if subscription.status == 'Active' %}selected{% endif %}>Active</option>
+                          <option value="Inactive" {% if subscription.status == 'Inactive' %}selected{% endif %}>Inactive</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {% endif %}
+
+                    <div class="row mb-3">
+                      <label for="type" class="col-md-4 col-lg-3 col-form-label">Type</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="type" class="form-control" id="type">
+                          <option value="Annual" {% if subscription.type == 'Annual' %}selected{% endif %}>Annual</option>
+                          <option value="Monthly" {% if subscription.type == 'Monthly' %}selected{% endif %}>Monthly</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+
+                      {% if session['role'] == 'Member' %}
+                      <!-- Renew Button -->
+                      <a href="{{ url_for('payment_page.plan_renewal') }}" class="btn btn-primary btn-sm">Renew Plan</a>
+                      <!-- Cancel Membership Button -->
+                      <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelMembershipModal">
+                          Cancel Membership
+                      </button>
+                      {% endif %}
+                    </div>
+
+                  </form><!-- End Manage Subscription Form -->                           
+                  
+                  {% if session['role'] == 'Member' %}
+                  <!-- Cancel Membership Modal -->
+                  <div class="modal fade" id="cancelMembershipModal" tabindex="-1" aria-labelledby="cancelMembershipModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="cancelMembershipModalLabel">Confirm Cancellation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to cancel your membership?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <form action="{{ url_for('subscription_page.cancel_membership') }}" method="POST">
+                                    <input type="hidden" name="user_id" value="{{ user_id }}">
+                                    <button type="submit" class="btn btn-danger">Cancel Membership</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  {% endif %}
+                </div> <!-- End Manage Subscription Tab Pane -->
+
+              </div><!-- End Bordered Tabs -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main><!-- End #main -->
+
+{% endblock %}

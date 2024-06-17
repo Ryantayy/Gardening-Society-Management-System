@@ -1,0 +1,230 @@
+
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Edit User Profile</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.userList') }}">Manage Users</a></li>
+          <li class="breadcrumb-item active">Edit User Profile</li>
+
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    
+    <section class="section profile">
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                        <label for="profileImage" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            {% if profile.profile_image %}
+                            <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Profile Image">
+                            {% elif profile.filename and profile.image_status =='Active' %}
+                              <!-- Use an img tag for consistent styling -->
+                              <img src="{{ url_for('static', filename='assets/img/' ~ profile.filename) }}" class="img-fluid" alt="Profile Image" style="object-fit: cover;">
+                            {% else %}
+                              <img src="{{ url_for('static', filename='assets/img/profile-img.png') }}" class="img-fluid" alt="Profile Image">
+                            {% endif %}
+
+                            <div class="pt-2">   
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <form action="{{ url_for('account_page.upload_primary_image_user', user_id=profile.user_id) }}" method="post" enctype="multipart/form-data" class="mr-2">
+                                            <input type="hidden" name="role" value="{{ profile.role }}"> 
+                                            <input type="file" name="image" id="image" style="display: none;" onchange="form.submit()">
+                                        <label for="image" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></label>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <form action="{{ url_for('account_page.delete_image_user', user_id=profile.user_id) }}" method="post" class="mr-2">
+                                            <input type="hidden" name="role" value="{{ profile.role }}"> 
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </div> 
+                                
+                                <h2> {{ profile.first_name }} </h2>
+                                <h3> {{ profile.last_name }} </h3>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <!-- Bordered Tabs -->
+                        <ul class="nav nav-tabs nav-tabs-bordered">
+
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                        </li>
+
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                        </li>
+
+                        </ul>     
+
+                        <div class="tab-content pt-2">
+                            <div class="tab-pane fade show active profile-edit pt-3" id="profile-edit">
+                                <form action="/account/editUserProfile" method="post">
+                                    <input type="hidden" name="user_id" value="{{ profile.user_id }}">
+                                    <input type="hidden" name="role" value="{{ profile.role }}">                  
+                            
+                                    <!-- Title Field -->
+                                    <div class="row mb-3">
+                                        <label for="title" class="col-md-4 col-lg-3 col-form-label">Title</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <select name="title" class="form-control" id="title">
+                                                <option value="Mr." {% if profile.title == 'Mr.' %}selected{% endif %}>Mr.</option>
+                                                <option value="Mrs." {% if profile.title == 'Mrs.' %}selected{% endif %}>Mrs.</option>
+                                                <option value="Miss." {% if profile.title == 'Miss.' %}selected{% endif %}>Miss.</option>
+                                                <option value="Ms." {% if profile.title == 'Ms.' %}selected{% endif %}>Ms.</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                            
+                                <!-- First Name Field -->
+                                    <div class="row mb-3">
+                                        <label for="first_name" class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="first_name" type="text" class="form-control" id="first_name" value="{{ profile.first_name }}" required>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Last Name Field -->
+                                    <div class="row mb-3">
+                                        <label for="last_name" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="last_name" type="text" class="form-control" id="last_name" value="{{ profile.last_name }}" required>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Position Field -->
+                                    <div class="row mb-3">
+                                        <label for="position" class="col-md-4 col-lg-3 col-form-label">Position</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="position" type="text" class="form-control" id="position" value="{{ profile.position }}" required>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Phone Number Field -->
+                                    <div class="row mb-3">
+                                        <label for="phone_number" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="phone_number" type="tel" class="form-control" id="phone_number" value="{{ profile.phone_number }}" minlength="6" maxlength="11" pattern="^(\+?\(64\)|\(\+?64\)|\+?64|\(0[1-9]\)|0[1-9])?( ?-?[0-9]){7,9}$" title="Phone number must only contain numbers and hyphens." required>
+                                        </div>
+                                    </div>
+                                    
+                            
+                                    <!-- Email Field -->
+                                    <div class="row mb-3">
+                                        <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="email" type="email" class="form-control" id="email" value="{{ profile.email }}" required>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Address Field -->
+                                    <div class="row mb-3">
+                                        <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="address" type="text" class="form-control" id="address" value="{{ profile.address }}" required>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Member Specific Fields -->
+                                    {% if profile.role == 'Member' %}
+                                        <div class="row mb-3">
+                                            <label for="gardening_experience" class="col-md-4 col-lg-3 col-form-label">Gardening Experience</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <textarea name="gardening_experience" class="form-control" id="gardening_experience" style="height: 100px">{{ profile.gardening_experience }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="dateOfBirth" class="col-md-4 col-lg-3 col-form-label">Date Of Birth</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input name="date_of_birth" type="date" class="form-control" id="date_of_birth" value="{{ profile.date_of_birth }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="status" class="col-md-4 col-lg-3 col-form-label">Status</label>
+                                    
+                                            <div class="col-md-8 col-lg-9">
+                                                <select name="status" id="status" class="form-control" required>
+                                                    <option value="Active" {% if status.status == 'Active' %}selected{% endif %}>Active</option>
+                                                    <option value="Inactive" {% if status.status == 'Inactive' %}selected{% endif %}>Inactive</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+
+                                    <!-- Instructor Specific Fields -->
+                                    {% elif profile.role == 'Instructor' %}
+                                        <div class="form-group">
+                                            <label for="instructor_profile">Instructor Profile:</label>
+                                            <textarea class="form-control" id="instructor_profile" name="instructor_profile">{{ profile.instructor_profile }}</textarea>
+                                        </div>
+                                    {% endif %}
+                            
+                                    <!-- Save Changes Button -->
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Change Password Form -->
+                        <div class="tab-pane fade pt-3" id="profile-change-password">
+                            <form action="{{ url_for('account_page.change_password_user') }}" method="POST" onsubmit="return validatePasswords()">
+                                <input type="hidden" name="user_id" value="{{ profile.user_id }}">
+                                <input type="hidden" name="role" value="{{ profile.role }}"> 
+                    
+                                <!-- New Password Field -->
+                                <div class="row mb-3">
+                                    <label for="new_password" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input name="new_password" type="password" class="form-control" id="new_password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and have a mix of character types." required>
+                                    </div>
+                                </div>
+                    
+                                <!-- Confirm New Password Field -->
+                                <div class="row mb-3">
+                                    <label for="confirm_password" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input name="confirm_password" type="password" class="form-control" id="confirm_password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and have a mix of character types." required>
+                                        <span id="passwordMismatch" style="color: red; display: none;">New password cannot be the same as old password.</span>
+                                    </div>
+                                </div>
+
+                                <!-- Change Password Button -->
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Change Password</button>
+                                </div>
+                            </form><!-- End Change Password Form -->
+                        </div>
+                    </div>    
+
+                </div>
+            </div><!-- End Bordered Tabs -->
+
+            </div>
+        </div>
+
+    </div>
+  </section>
+</main><!-- End #main -->
+
+{% endblock %}

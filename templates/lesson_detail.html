@@ -1,0 +1,413 @@
+{% if session.loggedin %}
+    {% extends 'layout.html' %}
+{% else %}
+    {% extends 'base.html' %}
+{% endif %}
+
+{% block title %}Lessons{% endblock %}
+
+{% block content %}
+
+{% if session.loggedin %}
+  <main id="main" class="main">
+    
+    <div class="pagetitle">
+      <h1>Lesson Details</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+
+          {% if session['role'] == 'Member'%}
+          <li class="breadcrumb-item"><a href="{{ url_for('schedule_page.manage_lessons') }}">Lessons</a></li>
+          {% elif session['role'] == 'Instructor' or session['role'] == 'Manager'%}
+          <li class="breadcrumb-item"><a href="{{ url_for('schedule_page.manage_lessons') }}">Manage Lessons</a></li>
+          {% endif %}
+          
+          <li class="breadcrumb-item active">Lesson Details</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+
+    <section class="section profile">
+      <div class="row h-100">
+        <div class="col-xl-4">
+          <div class="card h-100">
+            {% if lesson.lesson_image %}
+            <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Lesson Image">
+            {% elif lesson.filename and lesson.image_status == 'Active' %}
+            <!-- Use inline style for background image -->
+            <div class="card-body profile-card" style="background: url('{{ url_for('static', filename='assets/img/' ~ lesson.filename) }}') no-repeat center center; background-size: cover;"></div>
+            {% else %}
+            <div class="card-body profile-card" style="background: url('{{ url_for('static', filename='assets/img/no_image.jpg') }}') no-repeat center center; background-size: cover;"></div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-xl-8">
+
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#lesson-overview">Overview</button>
+                </li>
+                
+                {% if session['role'] == 'Instructor' or session['role'] == 'Manager' %}
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#participant">Participant</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#lesson-edit">Edit Lesson</button>
+                </li>
+                {% endif %}
+
+              </ul>
+              
+              <div class="tab-content pt-2">
+                
+                <!-- Lesson Overview -->
+                <div class="tab-pane fade show active profile-overview" id="lesson-overview">
+                  <h5 class="card-title">{{ lesson.name }} 
+                    {% if lesson.status == 'Available' %}
+                      <span class="badge bg-success text-white">{{ lesson.status }}</span>
+                    {% elif lesson.status == 'Reserved' %}
+                      <span class="badge bg-danger text-white">{{ lesson.status }}</span>
+                    {% endif %}
+                  </h5>
+                  <p class="small fst-italic"> {{ lesson.details }}</p>
+                  
+                  <h5 class="card-title">Lesson Details</h5>
+                  
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Instructor</div>
+                    <div class="col-lg-9 col-md-8"> {{ lesson.instructor_first_name }} {{ lesson.instructor_last_name }} </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Location</div>
+                    <div class="col-lg-9 col-md-8"> {{ lesson.location_name }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Date</div>
+                    <div class="col-lg-9 col-md-8"> {{ lesson.date }}</div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Start Time</div>
+                    <div class="col-lg-9 col-md-8"> {{ lesson.start_time }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">End Time</div>
+                    <div class="col-lg-9 col-md-8">  {{ lesson.end_time }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Type</div>
+                    <div class="col-lg-9 col-md-8"> {{ lesson.type }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Price</div>
+                    <div class="col-lg-9 col-md-8"> ${{ lesson.price }}</div>
+                  </div>
+
+                  {% if session['role'] == 'Member' and lesson.status == 'Available' %}
+                    <div class="text-end">
+                      <form action="{{ url_for('schedule_page.reserve_lesson', lesson_id=lesson.lesson_id) }}" method="post">
+                        <button type="submit" class="btn btn-primary btn-sm">Reserve Lesson</button>
+                      </form>
+                    </div>
+                  {% elif (lesson.status == 'Reserved' and is_users_lesson) or (lesson.status == 'Reserved' and is_instructor_lesson) or (lesson.status == 'Reserved' and session['role'] == 'Manager') %}
+                    <div class="text-end">
+                      <form action="{{ url_for('schedule_page.cancel_lesson', lesson_id=lesson.lesson_id) }}" method="post">
+                        <button type="submit" class="btn btn-primary btn-sm">Cancel Reservation</button>
+                      </form>
+                    </div>
+                  {% endif %}
+                  
+                </div><!-- End Lesson Overview -->
+
+                {% if session['role'] == 'Instructor' or session['role'] == 'Manager' %}
+                <!-- Participant -->
+
+                <div class="tab-pane fade profile-overview" id="participant">
+                  {% if member %}
+                  <h5 class="card-title">{{ member.title}} {{ member.first_name }} {{ member.last_name }}</h5>
+        
+                  <p class="small fst-italic"> {{ member.gardening_experience }}</p>
+                  
+                  <h5 class="card-title">Member Details</h5>
+                    
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Position</div>
+                    <div class="col-lg-9 col-md-8"> {{ member.position }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Phone</div>
+                    <div class="col-lg-9 col-md-8"> {{ member.phone_number }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Email</div>
+                    <div class="col-lg-9 col-md-8"> {{ member.email }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Address</div>
+                    <div class="col-lg-9 col-md-8"> {{ member.address }}</div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Date of Birth</div>
+                    <div class="col-lg-9 col-md-8"> {{ member.date_of_birth }}</div>
+                  </div>
+
+                  {% else %}
+                  <h5 class="card-title">
+                    No Participant Yet.
+                  </h5>
+                  {% endif %}
+                  
+                </div><!-- End participant --> 
+
+                <!-- Edit Lesson -->
+
+                <div class="tab-pane fade profile-edit" id="lesson-edit">
+                  <div class="row mb-3">
+                    <label for="lessonImage" class="col-md-4 col-lg-3 col-form-label">Lesson Image</label>
+                    <div class="col-md-8 col-lg-9">
+                        {% if lesson.lesson_image %}
+                        <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Lesson Image">
+                        {% elif lesson.filename and lesson.image_status == 'Active' %}
+                        <img src="{{ url_for('static', filename='assets/img/' ~ lesson.filename) }}" class="img-fluid" alt="Lesson Image" style="object-fit: cover;">
+                        {% else %}
+                        <img src="{{ url_for('static', filename='assets/img/no_image.jpg') }}" class="img-fluid" alt="Lesson Image">
+                        {% endif %}
+                        <div class="pt-2">
+                            <form action="{{ url_for('schedule_page.upload_lesson_image', lesson_id=lesson.lesson_id) }}" method="post" enctype="multipart/form-data" class="pt-2">
+                                <input type="file" name="image" id="image" style="display: none;" onchange="form.submit()">
+                                <label for="image" class="btn btn-primary btn-sm" title="Upload new lesson image"><i class="bi bi-upload"></i></label>
+                            </form>
+                            <form action="{{ url_for('schedule_page.delete_lesson_image', lesson_id=lesson.lesson_id) }}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Remove lesson image"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                  </div>
+
+                  <form action="{{ url_for('schedule_page.edit_lesson', lesson_id=lesson.lesson_id) }}" method="POST">   
+
+                    <div class="row mb-3">
+                      <label for="name" class="col-md-4 col-lg-3 col-form-label">Lesson Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="name" type="text" class="form-control" id="name" value="{{ lesson.name }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="details" class="col-md-4 col-lg-3 col-form-label">Details</label>
+                      <div class="col-md-8 col-lg-9">
+                        <textarea name="details" class="form-control" id="details" rows="2" required>{{ lesson.details }}</textarea>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="instructor_id" class="col-md-4 col-lg-3 col-form-label">Instructor</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="instructor_id" class="form-select" id="instructor_id">
+                          {% for instructor in instructors %}
+                            <option value="{{ instructor.instructor_id }}" {% if instructor.instructor_id == lesson.instructor_id %}selected{% endif %}>{{ instructor.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="location_id" class="col-md-4 col-lg-3 col-form-label">Location</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="location_id" class="form-select" id="location_id">
+                          {% for location in locations %}
+                            <option value="{{ location.location_id }}" {% if location.location_id == lesson.location_id %}selected{% endif %}>{{ location.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="date" class="col-md-4 col-lg-3 col-form-label">Date</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="date" type="date" class="form-control" id="date" value="{{ lesson.date }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="start_time" class="col-md-4 col-lg-3 col-form-label">Start Time</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="start_time" type="time" class="form-control" id="start_time" value="{{ lesson.start_time }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="end_time" class="col-md-4 col-lg-3 col-form-label">End Time</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="end_time" type="time" class="form-control" id="end_time" value="{{ lesson.end_time }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="type" class="col-md-4 col-lg-3 col-form-label">Type</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="type" class="form-select" id="type">
+                          {% for type in lesson_types %}
+                            <option value="{{ type.type }}" {% if type.type == lesson.type %}selected{% endif %}>{{ type.type }}</option>
+                          {% endfor %}
+                        </select>
+                      </div> 
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="price" class="col-md-4 col-lg-3 col-form-label">Price</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="price" type="number" class="form-control" id="price" value="{{ lesson.price }}" required>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+                    </div>
+                    
+                  </form><!-- End Profile Edit Form -->
+                {% endif %}
+                </div><!-- End Lesson Overview -->
+
+              </div><!-- End Bordered Tabs -->
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+{% else%}
+
+  <section class="section profile">
+    <div class="row h-100">
+      <div class="col-xl-4">
+        <div class="card h-100">
+          {% if lesson.lesson_image %}
+          <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Lesson Image">
+          {% elif lesson.filename and lesson.image_status == 'Active' %}
+          <!-- Use inline style for background image -->
+          <div class="card-body profile-card" style="background: url('{{ url_for('static', filename='assets/img/' ~ lesson.filename) }}') no-repeat center center; background-size: cover;"></div>
+          {% else %}
+          <div class="card-body profile-card" style="background: url('{{ url_for('static', filename='assets/img/no_image.jpg') }}') no-repeat center center; background-size: cover;"></div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-xl-8">
+
+        <div class="card">
+          <div class="card-body pt-3">
+            <!-- Bordered Tabs -->
+            <ul class="nav nav-tabs nav-tabs-bordered">
+
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#lesson-overview">Overview</button>
+              </li>
+              
+              {% if session['role'] == 'Instructor' or session['role'] == 'Manager' %}
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#participant">Participant</button>
+              </li>
+
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#lesson-edit">Edit Lesson</button>
+              </li>
+              {% endif %}
+
+            </ul>
+            
+            <div class="tab-content pt-2">
+              
+              <!-- Lesson Overview -->
+              <div class="tab-pane fade show active profile-overview" id="lesson-overview">
+                <h5 class="card-title">{{ lesson.name }} 
+                  {% if lesson.status == 'Available' %}
+                    <span class="badge bg-success text-white">{{ lesson.status }}</span>
+                  {% elif lesson.status == 'Reserved' %}
+                    <span class="badge bg-danger text-white">{{ lesson.status }}</span>
+                  {% endif %}
+                </h5>
+                <p class="small fst-italic"> {{ lesson.details }}</p>
+                
+                <h5 class="card-title">Lesson Details</h5>
+                
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 label ">Instructor</div>
+                  <div class="col-lg-9 col-md-8"> {{ lesson.instructor_first_name }} {{ lesson.instructor_last_name }} </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 label ">Location</div>
+                  <div class="col-lg-9 col-md-8"> {{ lesson.location_name }}</div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 label ">Date</div>
+                  <div class="col-lg-9 col-md-8"> {{ lesson.date }}</div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 label ">Start Time</div>
+                  <div class="col-lg-9 col-md-8"> {{ lesson.start_time }}</div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 label">End Time</div>
+                  <div class="col-lg-9 col-md-8">  {{ lesson.end_time }}</div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 label">Type</div>
+                  <div class="col-lg-9 col-md-8"> {{ lesson.type }}</div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-3 col-md-4 label">Price</div>
+                  <div class="col-lg-9 col-md-8"> ${{ lesson.price }}</div>
+                </div>
+
+                {% if session['role'] == 'Member' and lesson.status == 'Available' %}
+                  <div class="text-end">
+                    <form action="{{ url_for('schedule_page.reserve_lesson', lesson_id=lesson.lesson_id) }}" method="post">
+                      <button type="submit" class="btn btn-primary btn-sm">Reserve Lesson</button>
+                    </form>
+                  </div>
+                {% elif (lesson.status == 'Reserved' and is_users_lesson) or (lesson.status == 'Reserved' and is_instructor_lesson) or (lesson.status == 'Reserved' and session['role'] == 'Manager') %}
+                  <div class="text-end">
+                    <form action="{{ url_for('schedule_page.cancel_lesson', lesson_id=lesson.lesson_id) }}" method="post">
+                      <button type="submit" class="btn btn-primary btn-sm">Cancel Reservation</button>
+                    </form>
+                  </div>
+                {% endif %}
+                
+              </div><!-- End Lesson Overview -->
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+
+{% endif %}
+
+{% endblock %}

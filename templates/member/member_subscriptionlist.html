@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block title %}Member Subscription List{% endblock %}
+
+{% block content %}
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Member Subscription List</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item active"><a href="{{ url_for('subscription_page.member_subscriptionlist') }}">Member Subscription List</a></li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Member Subscription List</h5>
+            <div class="table-responsive">
+              <table id="sortTable" class="table table-hover datatable">
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for s in subscriptions %}
+                  <tr>
+                    <td><a href="{{ url_for('subscription_page.manage_user_subscription', user_id=s.user_id) }}" style="color:#009688;">{{ s['user_id'] }}</a></td>
+                    <td>{{ s.title }} {{ s.first_name }} {{ s.last_name }}</td>
+                    <td>{{ s['type'] }}</td>
+                    <td>{{ s['start_date'] }}</td>
+                    <td>{{ s['end_date'] }}</td>
+                    <td>
+                      {% if s['check'] == '0' %}
+                      <span class="badge bg-danger"> Inactive</span>
+                      {% elif s['check'] == '1' %}
+                      <span class="badge bg-warning">Expires Soon</span>
+                      {% else %}
+                      <span class="badge bg-success">Active</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main> <!-- End #main -->
+
+
+
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'layout.html' %}
+{% block title %}Subscription Payment{% endblock %}
+
+{% block content %}
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Extend Subscription</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('subscription_page.manage_subscription') }}">Subscription</a></li>
+        <li class="breadcrumb-item active">Plan Renewal</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <div class="card-body pt-3">
+      <div class="container-fluid">
+          <div class="col-lg-6 col-md-8 d-flex flex-column align-items-center justify-content-center">
+
+          <div class="card mb-5">
+            <div class="card-body p-md-5">
+
+              <!-- Form for membership selection -->
+              <form class="row g-3 needs-validation" method="POST" action="{{ url_for('payment_page.plan_renewal') }}" novalidate>
+              <div class="mb-4">
+                <h4>Renew Your Plan</h4>
+                <p class="text-muted pb-2">
+                  Select the period you want to renew your membership for.
+                </p>
+              </div>
+
+              <!-- Dynamic Renewal Options Based on Subscription Type -->
+              {% if subscription.type == 'Monthly' %}
+              <!-- Monthly Renewal Options -->
+              <div class="mb-3">
+                <label for="renewal_period" class="form-label">Renewal Period (Months)</label>
+                <select class="form-select" name="renewal_period" id="renewal_period">
+                  <option value="1">1 month</option>
+                  <option value="2">2 months</option>
+                  <option value="3">3 months</option>
+                  <option value="4">4 months</option>
+                  <option value="5">5 months</option>
+                  <option value="6">6 months</option>
+                </select>
+              </div>
+              {% else %}
+              <!-- Annual Renewal Option -->
+              <div class="mb-3">
+                <label for="renewal_period" class="form-label">Renewal Period</label>
+                <select class="form-select" name="renewal_period" id="renewal_period">
+                  <option value="12">1 year</option>
+                </select>
+              </div>
+              {% endif %}
+              
+              <!-- Payment Details Section -->
+              <h4 class="mt-4 mb-3">Payment Details</h4>
+
+              <div class="mt-4 d-flex justify-content-between align-items-center">
+                <div class="d-flex flex-row align-items-center">
+                  <img src="{{ url_for('static', filename='assets/img/credit_card.png') }}" class="rounded" width="70" />
+                  <div class="d-flex flex-column ms-3">
+                    <span class="h5 mb-1">Credit Card</span>
+                    <span class="small text-muted">1234 XXXX XXXX 2570</span>
+                  </div>
+                </div>
+                <div>
+                  <input type="text" class="form-control" placeholder="CVC" style="width: 70px;" readonly />
+                </div>
+              </div>
+              
+              <!-- Submit Button -->
+              <div class="mt-4 text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Proceed to Payment</button>
+              </div>
+              </form>
+          </div>
+      </div>
+    </section>
+  </div>
+
+</main>
+{% endblock %}

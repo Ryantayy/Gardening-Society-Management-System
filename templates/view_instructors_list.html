@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block title %}List of Instructors{% endblock %}
+
+{% block content %}
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>List of Instructors</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item">Pages</li>
+        <li class="breadcrumb-item active">List of Instructors</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+      <!-- Loop through instructors_list and create a card for each instructor -->
+      {% for instructor in instructors_list %}
+      <div class="col-lg-4">
+        <div class="card">
+          {% if instructor.profile_image %}
+            <img src="data:image/jpeg;base64,{{ instructor.image_data }}" class="card-img-top" alt="{{ instructor.first_name }} {{ instructor.last_name }}">
+          {% else %}
+            <img src="{{ url_for('static', filename='assets/img/profile-img.jpg') }}" class="img-fluid" alt="Profile Image">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ instructor.title }} {{ instructor.first_name }} {{ instructor.last_name }}</h5>
+            <p class="card-text">{{ instructor.position }}</p>
+            <p class="card-text"><small class="text-muted">{{ instructor.phone_number }}</small></p>
+            <p class="card-text">{{ instructor.email }}</p>
+            <p class="card-text">{{ instructor.address }}</p>
+            <p class="card-text">{{ instructor.instructor_profile }}</p>
+            <p class="card-text">Lesson</p>
+            {% if instructor.lessons|length > 0 %}
+            <ul class="list-group list-group-flush">
+              {% for lesson in instructor.lessons %}
+              <li class="list-group-item">
+                {% if lesson.status == 'Available' %}
+                <span class="badge bg-success">{{ lesson.status }}</span>
+                {% elif lesson.status == 'Reserved' %}
+                <span class="badge bg-danger">{{ lesson.status }}</span>
+                {% endif %}
+                <a href="{{ url_for('schedule_page.lesson_detail', lesson_id=lesson.lesson_id) }}">{{ lesson.name }}</a>
+                <p>Date: {{ lesson.date }}, Time: {{ lesson.start_time }} - {{ lesson.end_time }}</p>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p class="mt-3">No lessons now</p>
+            {% endif %}
+            </ul>  
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</main><!-- End #main -->
+
+{% endblock %}

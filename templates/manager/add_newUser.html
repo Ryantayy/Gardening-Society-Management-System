@@ -1,0 +1,173 @@
+{% extends "layout.html" %}
+{% block title %}Add New User{% endblock %}
+
+{% block content %}
+
+<main id="main" class="main">
+
+<div class="pagetitle">
+<h1>Add New User</h1>
+<nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('account_page.userList') }}">Manage Users</a></li>
+      <li class="breadcrumb-item active">Add New User</li>
+    </ol>
+</nav>
+</div><!-- End Page Title -->
+
+        
+<section class="section">
+  <div class="row">
+    <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+      <h5 class="card-title">Add New User</h5>
+      <form action="/account/adduser" method="POST">
+          
+          <div class="row mb-3">
+              <label for="role" class="col-sm-2 col-form-label">Role: </label>
+              <div class="col-sm-10">
+                <select class="form-select" id="role" name="role" required>
+                    <option value="Member">Member</option>
+                    <option value="Instructor">Instructor</option>
+                </select>
+              </div>  
+          </div>
+
+          <!-- Common fields -->
+          <div class="row mb-3">
+            <label for="user_name" class="col-sm-2 col-form-label">User Name: </label>
+            <div class="col-sm-10">
+              <input name="user_name" type="text" class="form-control" id="user_name" pattern="[a-zA-Z0-9]{1,20}" title="Username must be not include any special characters and spaces." value="{{ request.form.user_name|default('') }}" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="password" class="col-sm-2 col-form-label">Password: </label>
+            <div class="col-sm-10">
+              <input name="password" type="password" class="form-control" id="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and have a mix of character types." required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="title" class="col-sm-2 col-form-label">Title:</label>
+            <div class="col-sm-10">
+                <select name="title" class="form-select" id="title" required>
+                    <option disabled>Choose...</option>
+                    <option value="Mr." {{ 'Mr.' == request.form.get('title', '') and 'selected' or '' }}>Mr.</option>
+                    <option value="Mrs." {{ 'Mrs.' == request.form.get('title', '') and 'selected' or '' }}>Mrs.</option>
+                    <option value="Miss." {{ 'Miss.' == request.form.get('title', '') and 'selected' or '' }}>Miss</option>
+                    <option value="Ms." {{ 'Ms.' == request.form.get('title', '') and 'selected' or '' }}>Ms.</option>
+                </select>
+            </div>
+          </div>
+                                
+          <div class="row mb-3">
+            <label for="first_name" class="col-sm-2 col-form-label">First Name: </label>
+            <div class="col-sm-10">
+              <input name="first_name" type="text" class="form-control" id="first_name" pattern="[A-Za-z ]+" title="First name must contain only letters and spaces." value="{{ request.form.first_name|default('') }}" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="last_name" class="col-sm-2 col-form-label">Last Name: </label>
+            <div class="col-sm-10">
+              <input name="last_name" type="text" class="form-control" id="last_name" pattern="[A-Za-z ]+" title="Last name must contain only letters and spaces." value="{{ request.form.last_name|default('') }}" required>
+            </div>
+          </div>
+
+
+          <div class="row mb-3">
+            <label for="position" class="col-sm-2 col-form-label">Position: </label>
+            <div class="col-sm-10">
+              <input name="position" type="text" class="form-control" id="position" value="{{ request.form.position|default('') }}" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="phone_number" class="col-sm-2 col-form-label">Phone: </label>
+            <div class="col-sm-10">
+              <input name="phone_number" type="tel" class="form-control" id="phone_number" pattern="[\d\s\-\+\(\)]{5,}" title="Phone number must be at least 5 characters long and in a valid format." value="{{ request.form.phone_number|default('') }}" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="email" class="col-sm-2 col-form-label">Email: </label>
+            <div class="col-sm-10">
+              <input name="email" type="email" class="form-control" id="email" value="{{ request.form.email|default('') }}" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="address" class="col-sm-2 col-form-label">Address: </label>
+            <div class="col-sm-10">
+              <input name="address" type="text" class="form-control" id="address" value="{{ request.form.address|default('') }}" required>
+            </div>
+          </div>
+
+          <!-- Member specific fields -->
+          <div id="memberFields" style="display:none;">
+            
+            <div class="row mb-3">
+              <label for="type" class="col-sm-2 col-form-label">Member Type</label>
+              <div class="col-sm-10">
+                  <select class="form-select" id="type" name="type" required>
+                      <option disabled>Choose...</option>
+                      <option value="Monthly" {{ 'selected' if 'Monthly' == request.form.get('type', '') else '' }}>Monthly</option>
+                      <option value="Annual" {{ 'selected' if 'Annual' == request.form.get('type', '') else '' }}>Annual</option>
+                  </select>
+              </div>
+            </div>
+        
+            <div class="row mb-3">
+              <label for="dob" class="col-sm-2 col-form-label">Date of Birth</label>
+              <div class="col-sm-10">
+                <input name="dob" type="date" class="form-control" id="dob" value="{{ request.form.dob|default('') }}" required>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label for="gardenExp" class="col-sm-2 col-form-label">Gardening Experience</label>
+              <div class="col-sm-10">
+                <textarea class="form-control" rows="4" id="gardenExp" name="gardenExp">{{ request.form.gardenExp|default('') }}</textarea>               
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-sm-2 col-form-label"> </div>
+              <div class="col-sm-10">
+                  <input class="form-check-input" type="checkbox" name="is_student_or_csc" id="is_student_or_csc" {% if request.form.is_student_or_csc %}checked{% endif %}>
+                  <label class="form-check-label" for="is_student_or_csc">
+                      User is a Student/CSC holders.
+                  </label>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Instructor specific fields -->
+          <div id="instructorFields" style="display:none;">
+            <div class="row mb-3">
+                <label for="instructor_profile" class="col-sm-2 col-form-label">Instructor Profile:</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" rows="4" id="instructor_profile" name="instructor_profile">{{ request.form.get('instructor_profile', '') }}</textarea>               
+                </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-sm-10 offset-sm-2">
+              <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</section>
+
+</main><!-- End #main -->
+
+{% endblock %}
+

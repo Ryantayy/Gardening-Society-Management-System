@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+<main id="main" class="main">
+
+<div class="pagetitle">
+    <h1>Manage Price</h1>
+    <nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item active"><a href="{{ url_for('manage_page.priceManagement') }}">Manage Price</a></li>
+    </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Manage Price</h5>
+                <ul class="nav nav-tabs nav-tabs-bordered d-flex" id="borderedTabJustified" role="tablist">
+                    <li class="nav-item flex-fill" role="presentation">
+                        <button class="nav-link w-100 active" id="lessons-tab" data-bs-toggle="tab" data-bs-target="#lessons" type="button" role="tab" aria-controls="lessons" aria-selected="true">Lesson Prices</button>
+                    </li>
+                    <li class="nav-item flex-fill" role="presentation">
+                        <button class="nav-link w-100" id="workshops-tab" data-bs-toggle="tab" data-bs-target="#workshops" type="button" role="tab" aria-controls="workshops" aria-selected="false">Workshop Prices</button>
+                    </li>
+                    <li class="nav-item flex-fill" role="presentation">
+                        <button class="nav-link w-100" id="memberships-tab" data-bs-toggle="tab" data-bs-target="#memberships" type="button" role="tab" aria-controls="memberships" aria-selected="false">Membership Prices</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="lessons" role="tabpanel" aria-labelledby="lessons-tab">
+                        <form action="/manage/priceManagement" method="post">
+                            <table class="table table-hover datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for lesson in lessonPrice %}
+                                    <tr>
+                                        <td>{{ lesson.type }}</td>
+                                        <td><input type="text" name="lesson{{lesson.lesson_id}}" value="{{ lesson.price }}"></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="workshops" role="tabpanel" aria-labelledby="workshops-tab">
+                        <form action="/manage/priceManagement" method="post">
+                            <table class="table table-hover datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for workshop in workshopPrice %}
+                                    <tr>
+                                        <td>{{ workshop.title }}</td>
+                                        <td><input type="text" name="workshop{{ workshop.workshop_id }}" value="{{ workshop.price }}"></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="memberships" role="tabpanel" aria-labelledby="memberships-tab">
+                        <form action="/manage/priceManagement" method="post">
+                            <table class="table table-hover datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for price in prices %}
+                                    <tr>
+                                        <td>Membership {{ price.price_type }}</td>
+                                        <td><input type="text" name="{{ price.price_type }}" value="{{ price.price }}"></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+</main><!-- End #main -->
+{% endblock %}

@@ -1,0 +1,70 @@
+
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Edit Location</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item active"><a href="{{ url_for('location_page.location_list') }}">Manage Locations</a></li>
+          <li class="breadcrumb-item active">Edit Location</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    
+    <section class="section profile">
+        <div class="row">
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <div class="tab-content pt-2">
+                            <div class="tab-pane fade show active profile-edit pt-3" id="location-edit">
+                                <form action="{{ url_for('location_page.edit_location_detail', location_id=location.location_id) }}" method="post">
+                                    <input type="hidden" name="user_id" value="{{ location.location_id }}">              
+                            
+                                <!-- First Name Field -->
+                                    <div class="row mb-3">
+                                        <label for="name" class="col-md-4 col-lg-3 col-form-label">Name</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="name" type="text" class="form-control" id="name" value="{{ location.name }}" required>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Last Name Field -->
+                                    <div class="row mb-3">
+                                        <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="address" type="text" class="form-control" id="address" value="{{ location.address }}" required>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Position Field -->
+                                    <div class="row mb-3">
+                                        <label for="capacity" class="col-md-4 col-lg-3 col-form-label">Capacity</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="capacity" type="text" class="form-control" id="capacity" value="{{ location.capacity }}" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                            </form>
+                        </div>
+                    </div>    
+
+                </div>
+            </div><!-- End Bordered Tabs -->
+
+            </div>
+        </div>
+
+    </div>
+  </section>
+</main><!-- End #main -->
+
+{% endblock %}

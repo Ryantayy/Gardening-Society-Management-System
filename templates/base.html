@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='assets/img/favicon.png') }}" type="image/png">
+
+        <!--=============== REMIXICONS ===============-->
+        <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+        
+        <!--=============== SWIPER CSS ===============-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/swiper-bundle.min.css') }}">
+
+        <!--=============== CSS ===============-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.css') }}">
+
+		<!-- Bootstrap CSS -->
+        <link href="{{ url_for('static', filename='assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+
+        <!-- Vendor CSS Files -->
+        <link href="{{ url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/vendor/quill/quill.snow.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/vendor/quill/quill.bubble.css" rel="stylesheet') }}">
+        <link href="{{ url_for('static', filename='assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/vendor/simple-datatables/style.css') }}" rel="stylesheet">
+
+        {%block extra_css %}{% endblock %}
+	</head>
+	<body>
+        <header class="header base-nav" id="header">
+            <nav class="nav container">
+                <a href="/" class="nav__logo">Rākau Gardening</a>
+
+                <div class="nav__menu" id="nav-menu">
+                    <ul class="nav__list">
+                        <li class="nav__item">
+                            <a href="/" class="nav__link active-link">Home</a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="{{ url_for('timetable_page.view_timetable') }}" class="nav__link">Timetable</a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="{{ url_for('account_page.login') }}" class="nav__link">Login</a>
+                        </li>
+                    </ul>
+
+                    <i class="ri-close-line nav__close" id="nav-close"></i>
+                </div>
+
+                <div class="nav__toggle" id="nav-toggle">
+                    <i class="ri-function-line"></i>
+                </div>
+            </nav>
+        </header>
+
+		{% block content %}{% endblock %}
+		
+		{% include 'footer.html' %}
+
+		<!--========== SCROLL UP ==========-->
+        <a href="#" class="scrollup" id="scroll-up">
+            <i class="ri-arrow-up-line scrollup__icon"></i>
+        </a>
+
+        <!--=============== SCROLL REVEAL===============-->
+        <script src="{{ url_for('static', filename='assets/js/scrollreveal.min.js') }}"></script>
+        
+        <!--=============== SWIPER JS ===============-->
+        <script src="{{ url_for('static', filename='assets/js/swiper-bundle.min.js') }}"></script>
+
+        <!--=============== MAIN JS ===============-->
+        <script src="{{ url_for('static', filename='assets/js/main_base.js' ) }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+
+        <!-- Vendor JS Files -->
+        <script src="{{ url_for('static', filename='assets/vendor/apexcharts/apexcharts.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/vendor/chart.js/chart.umd.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/vendor/echarts/echarts.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/vendor/quill/quill.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/vendor/simple-datatables/simple-datatables.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/vendor/tinymce/tinymce.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/vendor/php-email-form/validate.js') }}"></script>
+
+        {% block extra_js %}{% endblock %}
+
+        <!-- Toasts Container -->
+        <div aria-live="polite" aria-atomic="true" class="position-relative">
+            <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11;">
+            <!-- Toasts will be added here dynamically -->
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+            var messages = JSON.parse('{{ get_flashed_messages(with_categories=true) | tojson | safe }}');
+            var toastContainer = document.getElementById('toastContainer');
+            
+            messages.forEach(function(message) {
+                var category = message[0], content = message[1];
+                // Define background classes based on message category
+                var bgClass = category === 'success' ? 'bg-success text-white' : 
+                            category === 'danger' ? 'bg-danger text-white' : 
+                            category === 'warning' ? 'bg-warning' : 
+                            'bg-primary text-white'; // Default case
+            
+                var toastHtml = `
+                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+                    <div class="toast-header">
+                    <strong class="me-auto">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body ${bgClass}">
+                    ${content}
+                    </div>
+                </div>
+                `;
+            
+                toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            });
+            
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            var toastList = toastElList.map(function(toastEl) {
+                return new bootstrap.Toast(toastEl).show();
+            });
+            });
+            </script>    
+
+	</body>  
+</html>

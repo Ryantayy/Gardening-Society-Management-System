@@ -1,0 +1,179 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+<main id="main" class="main">
+
+
+  <div class="pagetitle">
+    <h1>Location List</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item active"><a href="{{ url_for('location_page.location_list') }}">Manage Locations</a></li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+    <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="col-md-12">
+
+          <h5 class="card-title">Location List</h5>
+          
+          <a href="{{ url_for('location_page.add_location') }}">
+            <button type="button" class="btn btn-primary btn-sm">Add New Location</button>
+          </a><br><br>
+
+          <div class="table-responsive">
+            <table id="memberTable" class="table table-hover datatable">
+              <thead>
+                <tr>
+                  <th onclick="sortMemberTable(0)">Location ID</th>
+                  <th onclick="sortMemberTable(1)">Name</th>
+                  <th onclick="sortMemberTable(2)">Address</th>
+                  <th onclick="sortMemberTable(3)">Capacity</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for location in locations %}
+                <tr>
+                  <td>{{ location.location_id }}</td>
+                  <td>{{ location.name }}</td>
+                  <td>{{ location.address }}</td>
+                  <td>{{ location.capacity }}</td>
+                  <td>
+                      <a href="{{ url_for('location_page.location_detail', location_id=location.location_id) }}" class="btn btn-primary btn-sm">Edit</a>
+                  </td>
+                    
+                  <td>
+                    <form action="{{ url_for('location_page.delete_location', location_id=location.location_id) }}" method="post">
+                      <input type="hidden" name="location_id" value="{{ location.location_id }}">
+                      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+  </section>
+
+</main><!-- End #main -->
+
+<script>
+function sortInstructorTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("instructorTable");
+  switching = true;
+  dir = "asc";
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("td")[n];
+      y = rows[i + 1].getElementsByTagName("td")[n];
+      if (n === 0) { 
+        if (dir == "asc") {
+          if (parseInt(x.innerHTML) > parseInt(y.innerHTML)) {
+            shouldSwitch = true;
+            break;
+          }
+        } else if (dir == "desc") {
+          if (parseInt(x.innerHTML) < parseInt(y.innerHTML)) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      } else { 
+        if (dir == "asc") {
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        } else if (dir == "desc") {
+          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      switchcount++;
+    } else {
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+
+function sortMemberTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("memberTable");
+  switching = true;
+  dir = "asc";
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("td")[n];
+      y = rows[i + 1].getElementsByTagName("td")[n];
+      if (n === 0) { 
+        if (dir == "asc") {
+          if (parseInt(x.innerHTML) > parseInt(y.innerHTML)) {
+            shouldSwitch = true;
+            break;
+          }
+        } else if (dir == "desc") {
+          if (parseInt(x.innerHTML) < parseInt(y.innerHTML)) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      } else { 
+        if (dir == "asc") {
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        } else if (dir == "desc") {
+          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      switchcount++;
+    } else {
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+
+</script>
+{% endblock %}

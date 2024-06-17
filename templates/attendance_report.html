@@ -1,0 +1,211 @@
+{% extends 'layout.html' %}
+
+{% block title %}Attendance Report{% endblock %}
+
+{% block content %}
+<script>datePickerId.max = new Date().toISOString().split("T")[0];</script>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Attedndance Report</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('manage_page.attendance') }}">Attendance</a></li>
+          <li class="breadcrumb-item active">Attendance Report</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+  
+    <section class="section">
+
+    <div class="row gy-2 gx-3 align-items-center">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              {% if mode != "date" %}
+              <button onclick="history.back()" class="mt-4 btn btn-danger">Go Back</button>
+              {% endif %}
+              <div class="mt-4 mb-4">
+                <h4>Attendance: {{ attendance }}%</h4>
+              </div>
+              {% if mode == "date" %}
+              <div class="mt-4 mb-4">
+                <h5>Search date range: </h5>
+                <form action="{{ url_for('manage_page.attendance_report_date') }}" method="post">
+                  <div class="row mb-3">
+                    
+                    <label for="start_date" class="col-sm-2 col-form-label">Start date</label>
+                    <div class="col-md-3">
+                    <input type="date" name="start_date" class="form-control" id="datePickerId" value="{{start_date}}" required/>
+                    </div>
+
+                    <label for="end_date" class="col-sm-2 col-form-label">End date</label>
+                    <div class="col-md-3">
+                    <input type="date" name="end_date" class="form-control" id="datePickerId" value="{{end_date}}" required/>
+                    </div>
+
+                    <div class="col-md-2">
+                      <button type="submit" class="btn btn-primary">Search</button>
+                      {% if start_date %}
+                      <a href="{{url_for('manage_page.attendance_report')}}" class="btn btn-secondary">Clear</a>
+                      {% endif %}
+  
+                    </div>
+
+
+                  </div>
+
+                </form>
+              </div>
+              {% endif %}
+             
+              <!-- Workshop Table -->
+              <div class="table-responsive">
+                <table id="attendList" class="table table-hover datatable">
+                  <thead>
+                    <tr>
+                      <th onclick="sortAttendList(0)">Booking ID</th>
+                      <th onclick="sortAttendList(1)">First Name</th>
+                      <th onclick="sortAttendList(2)">Last Name</th>
+                      <th onclick="sortAttendList(3)">Type</th>
+                      <th onclick="sortAttendList(4)">Lesson/Workshop</th>
+                      <th onclick="sortAttendList(5)">Date</th>
+                      <th onclick="sortAttendList(6)">Status</th>  
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in list %}
+                    <tr>
+                      <td>{{ item.booking_id }}</td>
+                      <td><a href="{{url_for('manage_page.attendance_individual_report', type = 'member', id = item.user_id)}}">{{ item.first_name }}</a></td>
+                      <td><a href="{{url_for('manage_page.attendance_individual_report', type = 'member', id = item.user_id)}}">{{ item.last_name }}</a></td>
+                      <td>{{ item.type }}</td>
+                      <td><a href="{{url_for('manage_page.attendance_individual_report', type = item.type, id = item.wlid)}}">{{ item.wlname }}</td>
+                      <td>{{ item.wldate }}</td>
+                      {% if item.status == "Completed" %}
+                      <td><span class="badge bg-success">Present</span></td>
+                      {% elif item.status == "Reserved" %}
+                      <td><span class="badge bg-danger">Absent</span></td>
+                      {% elif item.status == "Waitlist" %}
+                      <td><span class="badge bg-secondary">Waitlist</span></td>
+                      {% endif %}
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- End Workshop Table -->
+  
+
+            </div>
+          </div>
+
+        </div>
+    </section>
+  </main>
+  <script>
+    function sortInstructorTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      table = document.getElementById("instructorTable");
+      switching = true;
+      dir = "asc";
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          x = rows[i].getElementsByTagName("td")[n];
+          y = rows[i + 1].getElementsByTagName("td")[n];
+          if (n === 0) { 
+            if (dir == "asc") {
+              if (parseInt(x.innerHTML) > parseInt(y.innerHTML)) {
+                shouldSwitch = true;
+                break;
+              }
+            } else if (dir == "desc") {
+              if (parseInt(x.innerHTML) < parseInt(y.innerHTML)) {
+                shouldSwitch = true;
+                break;
+              }
+            }
+          } else { 
+            if (dir == "asc") {
+              if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            } else if (dir == "desc") {
+              if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            }
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount++;
+        } else {
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+    
+    function sortMemberTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      table = document.getElementById("memberTable");
+      switching = true;
+      dir = "asc";
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          x = rows[i].getElementsByTagName("td")[n];
+          y = rows[i + 1].getElementsByTagName("td")[n];
+          if (n === 0) { 
+            if (dir == "asc") {
+              if (parseInt(x.innerHTML) > parseInt(y.innerHTML)) {
+                shouldSwitch = true;
+                break;
+              }
+            } else if (dir == "desc") {
+              if (parseInt(x.innerHTML) < parseInt(y.innerHTML)) {
+                shouldSwitch = true;
+                break;
+              }
+            }
+          } else { 
+            if (dir == "asc") {
+              if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            } else if (dir == "desc") {
+              if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            }
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount++;
+        } else {
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+    
+    </script>
+{% endblock %}

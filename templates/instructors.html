@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block title %}News{% endblock %}
+
+{% block content %}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Instructors</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+          <li class="breadcrumb-item active">Instructors</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Instructors and Their Lessons</h5>
+              <!-- Instructors Table -->
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Lessons</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for instructor in instructors %}
+                  <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ instructor.first_name }} {{ instructor.last_name }}</td>
+                    <td>{{ instructor.position }}</td>
+                    <td>{{ instructor.email }}</td>
+                    <td>
+                      {% if instructor.lessons %}
+                        {% for lesson in instructor.lessons %}
+                          <div>{{ lesson.name }} - {{ lesson.date }} ({{ lesson.start_time }} - {{ lesson.end_time }})</div>
+                        {% endfor %}
+                      {% else %}
+                        <div>No lessons scheduled</div>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Instructors Table -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+</main><!-- End #main -->
+      {% endblock %}
+

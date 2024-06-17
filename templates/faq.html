@@ -1,0 +1,233 @@
+{% extends "layout.html" %}
+{% block title %}FAQ{% endblock %}
+
+{% block content %}
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Frequently Asked Questions</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item active">Frequently Asked Questions</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section faq">
+    <div class="row">
+      <div class="col-lg-6">
+
+        <div class="card basic">
+          <div class="card-body">
+            <h5 class="card-title">General Questions</h5>
+
+            <div>
+              <h6>1. How can I join the Rākau Gardening Society?</h6>
+              <p>You can join us by signing up on our website. Choose between an annual or monthly membership plan. Don't forget to check if you're eligible for discounts as a student or community service card holder!</p>
+            </div>
+
+            <div class="pt-2">
+              <h6>2. What are the benefits of becoming a member?</h6>
+              <p>Members enjoy exclusive access to our workshops, one-on-one lessons with experienced instructors, and our vibrant community forum. Plus, you get to participate in members-only events and receive updates on the latest gardening trends and society news.</p>
+            </div>
+
+            <div class="pt-2">
+              <h6>3. Can I cancel my membership?</h6>
+              <p>Yes, you can cancel your membership at any time through your profile settings. Please note that refunds are subject to our terms and conditions.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- F.A.Q Group 1 -->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Workshops and Lessons</h5>
+
+            <div class="accordion accordion-flush" id="faq-group-1">
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsOne-1" type="button" data-bs-toggle="collapse">
+                    How do I book a workshop?
+                  </button>
+                </h2>
+                <div id="faqsOne-1" class="accordion-collapse collapse" data-bs-parent="#faq-group-1">
+                  <div class="accordion-body">
+                    Booking is simple! Just log in to your account, browse the available workshops, and select the one you're interested in. You'll find options for different locations, times, and fees to suit your schedule and budget.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsOne-2" type="button" data-bs-toggle="collapse">
+                    Are there any prerequisites for attending workshops?
+                  </button>
+                </h2>
+                <div id="faqsOne-2" class="accordion-collapse collapse" data-bs-parent="#faq-group-1">
+                  <div class="accordion-body">
+                    Most workshops are designed for a wide range of gardening skills, from beginner to advanced. Specific prerequisites, if any, are listed in the workshop details.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsOne-3" type="button" data-bs-toggle="collapse">
+                    What if I miss a workshop I've booked?
+                  </button>
+                </h2>
+                <div id="faqsOne-3" class="accordion-collapse collapse" data-bs-parent="#faq-group-1">
+                  <div class="accordion-body">
+                    We understand that plans can change. If you're unable to attend, please cancel your booking as soon as possible to free up a spot for other members. While refunds are not typically provided for missed workshops, contact us for specific circumstances.
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+        <!-- End F.A.Q Group 1 -->
+
+      </div>
+
+      <div class="col-lg-6">
+
+        <!-- F.A.Q Group 2 -->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Advanced Gardening Techniques</h5>
+
+            <div class="accordion accordion-flush" id="faq-group-2">
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsTwo-1" type="button" data-bs-toggle="collapse">
+                    How can I improve my plant propagation skills?
+                  </button>
+                </h2>
+                <div id="faqsTwo-1" class="accordion-collapse collapse" data-bs-parent="#faq-group-2">
+                  <div class="accordion-body">
+                    We offer specialized workshops focusing on various propagation techniques, including cuttings, layering, and division. Check out our workshop schedule for upcoming sessions on propagation.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsTwo-2" type="button" data-bs-toggle="collapse">
+                    Are organic fertilizers really better for my garden?
+                  </button>
+                </h2>
+                <div id="faqsTwo-2" class="accordion-collapse collapse" data-bs-parent="#faq-group-2">
+                  <div class="accordion-body">
+                    Organic fertilizers release nutrients more slowly and improve the structure of the soil over time. Join our sessions on organic gardening to learn more about the benefits and how to make your own compost.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsTwo-3" type="button" data-bs-toggle="collapse">
+                    Tips for dealing with common pests and diseases?
+                  </button>
+                </h2>
+                <div id="faqsTwo-3" class="accordion-collapse collapse" data-bs-parent="#faq-group-2">
+                  <div class="accordion-body">
+                    Preventative care is key, but we also cover natural and chemical treatment options in our pest management workshops. Understanding the ecosystem of your garden can help in managing pests and diseases more effectively.
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+        <!-- End F.A.Q Group 2 -->
+
+        <!-- F.A.Q Group 3 -->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Community and Participation</h5>
+
+            <div class="accordion accordion-flush" id="faq-group-3">
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsThree-1" type="button" data-bs-toggle="collapse">
+                    How can I volunteer with Rākau Gardening Society?
+                  </button>
+                </h2>
+                <div id="faqsThree-1" class="accordion-collapse collapse" data-bs-parent="#faq-group-3">
+                  <div class="accordion-body">
+                    We're thrilled you're interested in volunteering! We have opportunities in garden maintenance, event organization, and workshop assistance. Please visit our volunteer page or contact us directly to find out how you can help.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsThree-2" type="button" data-bs-toggle="collapse">
+                    Can I donate plants or gardening materials?
+                  </button>
+                </h2>
+                <div id="faqsThree-2" class="accordion-collapse collapse" data-bs-parent="#faq-group-3">
+                  <div class="accordion-body">
+                    Yes, donations are always welcome and greatly appreciated! We accept plants, seeds, gardening tools, and other materials that can benefit our community projects and educational workshops. Please get in touch to arrange a donation.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsThree-3" type="button" data-bs-toggle="collapse">
+                    Are there any community gardens I can join?
+                  </button>
+                </h2>
+                <div id="faqsThree-3" class="accordion-collapse collapse" data-bs-parent="#faq-group-3">
+                  <div class="accordion-body">
+                    Absolutely! We manage several community gardens across the area. These spaces provide a fantastic opportunity to grow your own plants, learn from fellow gardeners, and contribute to local green spaces. Check our website for locations and how to get involved.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsThree-4" type="button" data-bs-toggle="collapse">
+                    How can I share my gardening tips or stories with the community?
+                  </button>
+                </h2>
+                <div id="faqsThree-4" class="accordion-collapse collapse" data-bs-parent="#faq-group-3">
+                  <div class="accordion-body">
+                    We love hearing and sharing your gardening adventures! You can submit tips, stories, or articles to our monthly newsletter or blog. Additionally, consider giving a talk or workshop to share your knowledge directly with fellow members.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" data-bs-target="#faqsThree-5" type="button" data-bs-toggle="collapse">
+                    Does the society participate in any environmental or sustainability projects?
+                  </button>
+                </h2>
+                <div id="faqsThree-5" class="accordion-collapse collapse" data-bs-parent="#faq-group-3">
+                  <div class="accordion-body">
+                    Yes, sustainability is at the heart of what we do. We're involved in various projects focused on environmental conservation, native plant restoration, and sustainable gardening practices. We encourage our members to take part and support these initiatives.
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div><!-- End F.A.Q Group 3 -->
+      </div>
+    </div>
+  </section>
+
+</main><!-- End #main -->
+
+{% endblock %}

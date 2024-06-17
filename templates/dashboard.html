@@ -1,0 +1,564 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+
+            {% if session["role"] == "Manager" %}
+            <!-- Sales Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+                
+                <div class="card-body">
+                  <h5 class="card-title">Revenue <span>| FY to date</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="ri-money-dollar-circle-line"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6> $ {{ yearly_revenue.this_year_revenue }} </h6>
+                      <span class="small pt-1 fw-bold {{ 'text-success' if yearly_revenue.revenue_variation_percent >= 0 else 'text-danger' }}">
+                        {{ yearly_revenue.revenue_variation_percent|abs }}%
+                    </span>
+                    <span class="text-muted small pt-2 ps-1">
+                        {{ 'increase' if yearly_revenue.revenue_variation_percent >= 0 else 'decrease' }}
+                    </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div><!-- End Sales Card -->
+
+            <!-- Instructor Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <a href="#" style="text-decoration: none; color: inherit;">
+                      Instructors <span>| Total</span>
+                    </a>
+                  </h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ total_instructors }}</h6>
+                      <span class="text-success small pt-1 fw-bold">{{ total_instructors }} </span> <span class="text-muted small pt-2 ps-1">Active</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Instructors Card -->
+
+            <!-- Members Card -->
+            <div class="col-xxl-4 col-xl-12">
+
+              <div class="card info-card customers-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">Members <span>| Total</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ total_members.total_members }}</h6>
+                      <span class="text-success small pt-1 fw-bold">{{ total_members.total_active_members }}</span> <span class="text-muted small pt-2 ps-1">Active</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div><!-- End Members Card -->
+
+            {% elif session["role"] == "Member" or session["role"] == "Instructor" %}
+            <!-- Workshop Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+                
+                <div class="card-body">
+                  <h5 class="card-title">Workshop <span>| Today</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-calendar3"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6> {{ total_workshops.total_workshops }} </h6>
+                      <span class="text-success small pt-1 fw-bold"> {{ total_workshops.available_workshops }} </span> <span class="text-muted small pt-2 ps-1"> Available </span>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div><!-- End Workshop Card -->
+
+            <!-- Lessons Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card customers-card">
+                
+                <div class="card-body">
+                  <h5 class="card-title">Lessons <span>| Today</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6> {{ total_lessons.total_lessons }} </h6>
+                      <span class="text-success small pt-1 fw-bold"> {{total_lessons.available_lessons }}</span> <span class="text-muted small pt-2 ps-1">Available</span>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div><!-- End Lesson Card -->
+
+            <!-- Instructor Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <a href="#" style="text-decoration: none; color: inherit;">
+                      Instructors <span>| Total</span>
+                    </a>
+                  </h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ total_instructors }}</h6>
+                      <span class="text-success small pt-1 fw-bold">{{ total_instructors }} </span> <span class="text-muted small pt-2 ps-1">Active</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Instructors Card -->
+            {% endif %}
+            
+            {% if session["role"] == "Member" %}
+            <!-- My Bookings -->
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+                
+                <div class="card-body">
+                    
+                    <h5 class="card-title">My Bookings <span>| Current </span></h5>
+                    <table class="table table-borderless datatable ">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Instructor</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in my_bookings %}
+                            <tr>
+                              <td>
+                                {% if booking.workshop_id %}
+                                    <a href="/workshop/{{booking.workshop_id}}" style="color:#009688;">{{ booking.title }}</a>
+                                {% elif booking.lesson_id %}
+                                    <a href="{{ url_for('schedule_page.lesson_detail', lesson_id=booking.lesson_id) }}" style="color:#009688;">{{ booking.title }}</a>
+                                {% endif %}
+                              </td>
+                              <td>
+                                {% if booking.workshop_id %}
+                                    Workshop
+                                {% else %}
+                                    Lesson
+                                {% endif %}
+                              </td>
+                              <td>{{ booking.instructor_first_name }} {{ booking.instructor_last_name }}</td>
+                              <td>{{ booking.date }}</td>
+                              <td>{{ booking.start_time }} - {{ booking.end_time }} </td>
+                              {% if booking.status == 'Reserved' %}
+                                <td><span class="badge bg-danger text-white">Reserved</span></td>
+                              {% elif booking.status == 'Cancelled' %}
+                                <td><span class="badge bg-danger text-white">Cancelled</span></td>
+                              {% elif booking.status == 'Completed' %}
+                                <td><span class="badge bg-success text-white">Completed</span></td>
+                              {% endif %}
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5">No Current Bookings</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                  </div>
+              </div>
+            </div><!-- End My Bookings -->
+            {% endif %}
+
+            {% if session["role"] == "Member" or session["role"] == "Instructor" %}
+            <!-- Workshop Schedules -->
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+                
+                <div class="card-body">
+                    
+                    <h5 class="card-title">Upcoming Workshops <span>| This Week</span></h5>
+                    <table class="table table-borderless datatable ">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Instructor</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for workshop in upcoming_workshops %}
+                            <tr>
+                              <td>
+                                <a href="/workshop/{{workshop.workshop_id}}" style="color:#009688;">{{ workshop.title}}</a>
+                              </td>
+                              <td>{{ workshop.instructor_name }}</td>
+                              <td>{{ workshop.date }}</td>
+                              <td>{{ workshop.start_time }} - {{ workshop.end_time }} </td>
+                              {% if workshop.slots == 0 %}
+                                <td><span class="badge bg-danger text-white">Fully Booked</span></td>
+                              {% elif workshop.slots <= 5 %}
+                                <td><span class="badge bg-warning text-white">Limited Slots</span></td>
+                              {% else %}
+                                <td><span class="badge bg-success text-white">Available</span></td>
+                              {% endif %}
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5">No Upcoming Workshop</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                  </div>
+              </div>
+            </div><!-- End Workshop Schedule -->
+            {% endif %}
+
+            {% if session["role"] == "Member" or session["role"] == "Instructor" %}
+            <!-- Lesson Schedules -->
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+                
+                <div class="card-body">
+                    <h5 class="card-title">Upcoming Lessons <span> | This Week</span></h5>
+                    <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th scope="col">Lesson</th>
+                                {% if session["role"] != "Instructor" %}
+                                <th scope="col">Instructor</th>
+                                {% endif %}
+                                <th scope="col">Date</th>
+                                <th scope="col">Time</th>
+                                {% if session["role"] != "Instructor" %}<th scope="col">Status</th>{% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for lesson in upcoming_lessons %}
+                            <tr>
+                              <td scope="row"><a href="{{ url_for('schedule_page.lesson_detail', lesson_id=lesson.lesson_id) }}" style="color:#009688;"> {{ lesson.name }} </a></td>
+                                {% if session["role"] != "Instructor" %}
+                                <td>{{ lesson.instructor_name }}</td>
+                                {% endif %}
+                                <td>{{ lesson.date }}</td>
+                                <td>{{ lesson.start_time }} - {{ lesson.end_time }}</td>
+                                {%if session["role"] != "Instructor" and lesson.status=='Reserved' %}
+                                <td><span class="badge bg-danger">Reserved</span></td>
+                                {%elif session["role"] != "Instructor" and lesson.status=='Available' %}
+                                <td><span class="badge bg-success">Available</span></td>
+                                {%endif%}
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5">No lessons available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                  </div>
+              </div>
+            </div><!-- End Lesson Schedule -->
+            {% endif %}
+            
+            {% if session["role"] == "Manager" %}
+            <!-- Member Subscription Field -->
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Members Subscription <span>| Current</span></h5>
+
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Member</th>
+                        <th scope="col">Expiration Date</th>
+                        <th scope="col">Days to Expiration</th>
+                        <th scope="col">Membership Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for subscription in subscriptions %}
+                      <tr>
+                        <th scope="row"><a href="{{ url_for('subscription_page.manage_user_subscription', user_id=subscription.user_id) }}" style="color:#009688;">{{ subscription.user_id }} </a></th>
+                        <td> {{ subscription.member_name }}</td>
+                        <td> {{ subscription.end_date }}</td>
+                        <td> {{ subscription.days_to_expiration }}</td>
+                        {% if subscription.status == 'Active' %}
+                          <td><span class="badge bg-success"> {{ subscription.status }}</span></td>
+                        {% elif subscription.status == 'Inactive' %}
+                          <td><span class="badge bg-danger"> {{ subscription.status }}</span></td>
+                        {% endif %}
+                      {%endfor%}
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Member Subscription -->
+            {% endif %}
+
+            {% if session["role"] == "Manager" %}
+            <div class="col-12">
+              <div class="card">
+                  <div class="card-body">
+                      <h5 class="card-title">Financial</h5>
+                      <!-- Financial Chart -->
+                      <div id="columnChart"></div>
+          
+                      <script>
+                          document.addEventListener("DOMContentLoaded", function() {
+                              var options = {
+                                  series: {{ chart_data.series | tojson }},
+                                  chart: {
+                                      type: 'bar',
+                                      height: 350
+                                  },
+                                  plotOptions: {
+                                      bar: {
+                                          horizontal: false,
+                                          columnWidth: '55%',
+                                          endingShape: 'rounded'
+                                      },
+                                  },
+                                  dataLabels: {
+                                      enabled: false
+                                  },
+                                  stroke: {
+                                      show: true,
+                                      width: 2,
+                                      colors: ['transparent']
+                                  },
+                                  xaxis: {
+                                      categories: {{ chart_data.categories | tojson }},
+                                  },
+                                  yaxis: {
+                                      title: {
+                                          text: '$ '
+                                      }
+                                  },
+                                  fill: {
+                                      opacity: 1
+                                  },
+                                  tooltip: {
+                                      y: {
+                                          formatter: function(val) {
+                                              return "$ " + val 
+                                          }
+                                      }
+                                  }
+                              };
+          
+                              var chart = new ApexCharts(document.querySelector("#columnChart"), options);
+                              chart.render();
+                          });
+                      </script>
+                  </div>
+              </div>
+            </div>
+            {% endif %}
+
+          </div>
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+          {% if session["role"] == "Member" %}
+          <!-- Member Subscription Field -->
+          <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+
+              <div class="card-body">
+                <h5 class="card-title">Subscription Status <span>| Current</span></h5>
+
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th scope="col">Expiration Date</th>
+                      <th scope="col">Days to Expiration</th>
+                      <th scope="col">Membership Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ subscriptions.end_date }}</td>
+                      <td>{{ subscriptions.days_to_expiration }}</td>
+                      {% if subscriptions.status == 'Active' %}
+                        <td><span class="badge bg-success">{{ subscriptions.status }}</span></td>
+                      {% elif subscriptions.status == 'Inactive' %}
+                        <td><span class="badge bg-danger">{{ subscriptions.status }}</span></td>
+                      {% endif %}
+                    </tr>
+                  </tbody>
+                </table>
+
+              </div>
+
+            </div>
+          </div><!-- End Member Subscription -->
+          {% endif %}
+
+          <!-- News & Updates -->
+          <div class="card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                  <h6>Filter</h6>
+                </li>
+                <li><a class="dropdown-item" href="{{ url_for('account_page.dashboard', order='asc') }}">Oldest First</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('account_page.dashboard', order='desc') }}">Newest First</a></li>
+              </ul>
+            </div>
+            
+            <div class="card-body pb-0">
+              <h5 class="card-title">News &amp; Updates <span>| {{ order_description }}</span></h5>
+              <div class="news">
+                {% for item in news %}
+                <div class="post-item clearfix">
+                  {% if news_image %}
+                  <img src="data:image/jpeg;base64,{{ item.image_data }}" class="img-fluid" alt="News Image">
+                  {% else %}
+                  <img src="{{ url_for('static', filename='assets/img/news-placeholder.png') }}" class="img-fluid" alt="News Image">
+                  {% endif %}
+                  <h4><a href="{{ url_for('news_page.manage_news', news_id=item.news_id) }}">{{ item.title }}</a></h4>
+                  <p>{{ item.content }}</p>
+                </div>
+                {% endfor %}
+              </div><!-- End sidebar recent posts-->
+            </div>
+          </div><!-- End News & Updates -->
+
+          <!-- Popularity of Workshops -->
+          <div class="card">
+
+            <div class="card-body pb-0">
+              <h5 class="card-title">Workshop Popularity <span>| Current</span></h5>
+
+              <div id="trafficChart" style="min-height: 400px;" class="echart"></div>
+
+              <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                  const data = {{ workshop_popularity | tojson | safe }};
+                  const option = {
+                    tooltip: {
+                      trigger: 'item'
+                    },
+                    legend: {
+                      top: '5%',
+                      left: 'center',
+                      type: 'scroll'
+                    },
+                    series: [{
+                      name: 'Workshop Popularity',
+                      type: 'pie',
+                      radius: ['40%', '70%'],
+                      avoidLabelOverlap: false,
+                      label: {
+                        show: false,
+                        position: 'center'
+                      },
+                      emphasis: {
+                        label: {
+                          show: true,
+                          fontSize: '18',
+                          fontWeight: 'bold'
+                        }
+                      },
+                      labelLine: {
+                        show: false
+                      },
+                      data: data.map(item => ({ value: item.popularity, name: item.title }))
+                    }]
+                  };
+              
+                  echarts.init(document.querySelector("#trafficChart")).setOption(option);
+                });
+              </script>
+
+            </div>
+          </div><!-- End Workshop Popularity -->
+
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <script>
+    function filterByInstructor(instructorId) {
+        window.location.href = `/instructors?instructor_id=${instructorId}`;
+    }
+  </script>
+
+  {% endblock %}

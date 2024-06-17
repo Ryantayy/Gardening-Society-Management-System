@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block title %}Attendance - workshop.title{% endblock %}
+
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Attendance Sheet</h1>
+        <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/account/dashboard">Home</a></li>
+            <li class="breadcrumb-item"><a href="/manage/attendance">Attendance</a></li>
+            <li class="breadcrumb-item active">{{workshop.title}}</li>
+        </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card info-card sales-card">                    
+                    <div class="card-body">
+                      <h5 class="card-title">
+                        {{workshop.title}}
+                        <span>| {{workshop.name}} | {{workshop.date}} | {{workshop.start_time}} - {{workshop.end_time}}</span>
+                        </h5>
+                      <div class="d-flex align-items-center mt-3">
+                        <table class="table table-borderless ">
+                          <thead>
+                            <tr>
+                              <th scope="col">Member ID</th>
+                              <th scope="col">Name</th>
+                              <th scope="col"></th>                                                        
+                          </tr>
+                          </thead>
+                          <tbody>
+                            {% for member in members %}
+                            <tr>
+                              <td>{{member.member_id}}</td>
+                              <td>{{member.title}} {{member.first_name}} {{member.last_name}}</td>
+                              <td>
+                                <form action="{{url_for('manage_page.workshop_member_attend', wid = workshop.workshop_id, user_id = member.user_id)}}" method="post" class="form-inline">
+                                  {% if member.status == "Reserved" %}
+                                  <input type="submit" class="btn btn-primary" value="Take attendance"/>
+                                  {% elif member.status == "Completed"%}
+                                  <input type="submit" class="btn btn-success" value="Attendance taken" disabled />
+                                  {% else%}
+                                  <input type="submit" class="btn btn-secondary" value="N/A" disabled />
+                                  {% endif %}
+                                    </form>
+                              </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+
+                      </div>
+                    </div>
+                  </div>
+            </div>
+
+        </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container" style="padding-top: 50px;">
+    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-6 col-md-8 d-flex flex-column align-items-center justify-content-center">
+
+          <!-- Content here -->
+          <div class="card">
+            <div class="card-body p-md-5">
+
+              <!-- Form for membership selection -->
+              <form class="row g-3 needs-validation" method="POST" action="{{ url_for('payment_page.payment_on_register') }}" novalidate>
+              <div>
+                <h4>Choose your plan</h4>
+                <p class="text-muted pb-2">
+                  Student and Community Service Card Holders get 30% off on checkout.
+                </p>
+              </div>
+              
+               <!-- Monthly Subscription Option -->
+               <div class="px-3 py-4 border border-primary border-2 rounded mt-4 d-flex justify-content-between">
+                <label class="d-flex flex-row align-items-center justify-content-between w-100">
+                  <div class="d-flex flex-row align-items-center">
+                    <img src="{{ url_for('static', filename='assets/img/monthly_member.jpeg') }}" class="rounded" width="60" />
+                    <div class="d-flex flex-column ms-4">
+                      <span class="h5 mb-1">Monthly Subscription</span>
+                      <span class="small text-muted">Most Flexible</span>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-row align-items-center">
+                    <input type="radio" name="type" value="Monthly" class="me-2" required checked>
+                    <sup class="dollar font-weight-bold text-muted">$</sup>
+                    <span class="h2 mx-1 mb-0">{{prices[1]['price']}}</span>
+                    <span class="text-muted font-weight-bold mt-2">/ month</span>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Annual Subscription Option -->
+              <div class="px-3 py-4 border border-primary border-2 rounded mt-4 d-flex justify-content-between">
+                <label class="d-flex flex-row align-items-center justify-content-between w-100">
+                  <div class="d-flex flex-row align-items-center">
+                    <img src="{{ url_for('static', filename='assets/img/yearly_member.jpeg') }}" class="rounded" width="60" />
+                    <div class="d-flex flex-column ms-4">
+                      <span class="h5 mb-1">Annual Subscription</span>
+                      <span class="small text-muted">Best Value</span>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-row align-items-center">
+                    <input type="radio" name="type" value="Annual" class="me-2" required>
+                    <sup class="dollar font-weight-bold text-muted">$</sup>
+                    <span class="h2 mx-1 mb-0">{{prices[0]['price']}}</span>
+                    <span class="text-muted font-weight-bold mt-2">/ year</span>
+                  </div>
+                </label>
+              </div>
+              
+              <!-- Payment Details Section -->
+              <h4 class="mt-5">Payment details</h4>
+  
+              <div class="mt-4 d-flex justify-content-between align-items-center">
+                <div class="d-flex flex-row align-items-center">
+                  <img src="{{ url_for('static', filename='assets/img/credit_card.png') }}" class="rounded" width="70" />
+                  <div class="d-flex flex-column ms-3">
+                    <span class="h5 mb-1">Credit Card</span>
+                    <input type="number" class="form-control" placeholder="Card No." style="width: 300px;" pattern="[0-9]{15,16}" required />
+                    <div class="row col-12 mt-2 mb-2" style="margin-left:0px">
+                      <input type="number" class="form-control col-md-3" placeholder="MM" style="width: 70px;" pattern="[0-9]{2,}" required />
+                      <span class="col-md-1"> / </span>
+                      <input type="number" class="form-control col-md-3" placeholder="YY" style="width: 70px;" pattern="[0-9]{2,}" required />  
+                    </div>
+                    <div>
+                      <input type="text" class="form-control" placeholder="CVC" style="width: 70px;" required />
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+
+
+              <!-- Donation Field -->
+              <h4 class="mt-5">Optional Donations</h4>
+              
+              <div class="mt-4">
+                <label for="donation" class="form-label">Optional Donation:</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text">$</span>
+                  <input type="number" class="form-control" id="donation" name="donation" placeholder="Enter donation amount" min="0" step="0.01" aria-label="Donation amount (to the nearest dollar)">
+                </div>
+                <div class="form-text">Your donation helps us continue our mission. Thank you for your support!</div>
+              </div>
+              
+              <!-- Submit -->
+              <div class="mt-3">
+                <button class="btn btn-primary btn-block btn-lg button-custom">
+                  Proceed to payment <i class="fas fa-long-arrow-alt-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+</main><!-- End #main -->
+{% endblock %}

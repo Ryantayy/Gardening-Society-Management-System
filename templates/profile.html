@@ -1,0 +1,537 @@
+
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Profile</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item active">Profile</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section profile">
+      <div class="row">
+        <div class="col-xl-4">
+          <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+              {% if profile.profile_image %}
+              <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Profile Image">
+              {% elif profile.filename and profile.image_status=='Active' %}
+                <!-- Use an img tag for consistent styling -->
+                <img src="{{ url_for('static', filename='assets/img/' ~ profile.filename) }}" class="img-fluid" alt="Profile Image" style="object-fit: cover;">
+              {% else %}
+                <img src="{{ url_for('static', filename='assets/img/profile-img.png') }}" class="img-fluid" alt="Profile Image">
+              {% endif %}
+              <h2> {{ profile.first_name }} </h2>
+              <h3> {{ profile.last_name }} </h3>
+              <div class="social-links mt-2">
+                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-xl-8">
+
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                </li>
+
+              </ul>
+              
+              <div class="tab-content pt-2">
+                
+                {% if session['role'] == 'Member' %}
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  <h5 class="card-title">About</h5>
+                  <p class="small fst-italic"> {{ profile.gardening_experience }}</p>
+                  
+                  <h5 class="card-title">Profile Details</h5>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">User ID</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.user_id }}</div>
+                  </div>
+                    
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Member ID</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.member_id }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Username</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.user_name }}</div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.title }} {{ profile.first_name }} {{ profile.last_name }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Position</div>
+                    <div class="col-lg-9 col-md-8">  {{ profile.position }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Phone</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.phone_number }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Email</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.email }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Address</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.address }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Date of Birth</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.date_of_birth }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Member Type</div>
+                    <div class="col-lg-9 col-md-8">
+                      {% if profile.is_student_or_csc %}
+                        Student/Community Service Card Holder
+                      {% else %}
+                        Regular Member
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                {% elif session['role'] == 'Instructor' %}
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  <h5 class="card-title">About</h5>
+                  <p class="small fst-italic"> {{ profile.instructor_profile }}</p>
+                  
+                  <h5 class="card-title">Profile Details</h5>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">User ID</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.user_id }}</div>
+                  </div>
+                    
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Instructor ID</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.instructor_id }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Username</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.user_name }}</div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.title }} {{ profile.first_name }} {{ profile.last_name }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Position</div>
+                    <div class="col-lg-9 col-md-8">  {{ profile.position }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Phone</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.phone_number }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Email</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.email }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Address</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.address }}</div>
+                  </div>
+                </div>
+
+                {% elif session['role'] == 'Manager' %}
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  <h5 class="card-title">Profile Details</h5>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">User ID</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.user_id }}</div>
+                  </div>
+                    
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Manager ID</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.manager_id }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Username</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.user_name }}</div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.title }} {{ profile.first_name }} {{ profile.last_name }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Position</div>
+                    <div class="col-lg-9 col-md-8">  {{ profile.position }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Phone</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.phone_number }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Email</div>
+                    <div class="col-lg-9 col-md-8"> {{ profile.email }}</div>
+                  </div>
+                </div>
+                {% endif %}
+
+                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                  
+                  <!-- Profile Edit Form -->
+                  {% if session['role'] == 'Member' %}
+                  <div class="row mb-3">
+                    <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                    <div class="col-md-8 col-lg-9">
+                      {% if profile.profile_image %}
+                      <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Profile Image">
+                      {% elif profile.filename and profile.image_status=='Active' %}
+                        <img src="{{ url_for('static', filename='assets/img/' ~ profile.filename) }}" class="img-fluid" alt="Profile Image" style="object-fit: cover;">
+                      {% else %}
+                        <img src="{{ url_for('static', filename='assets/img/profile-img.png') }}" class="img-fluid" alt="Profile Image">
+                      {% endif %}
+                      <div class="pt-2">    
+                        <form action="{{ url_for('account_page.upload_primary_image', user_id=profile.user_id) }}" method="post" enctype="multipart/form-data" class="pt-2">
+                          <input type="file" name="image" id="image" style="display: none;" onchange="form.submit()">
+                          <label for="image" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></label>
+                        </form>
+                          <form action="{{ url_for('account_page.delete_image', user_id=profile.user_id) }}" method="post" class="d-inline">
+                          <button type="submit" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></button>
+                        </form>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <form action="{{ url_for('account_page.profile') }}" method="POST">                    
+                    <div class="row mb-3">
+                      <label for="title" class="col-md-4 col-lg-3 col-form-label">Title</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="title" class="form-select" id="title">
+                          <option value="Mr." {% if profile.title == 'Mr.' %}selected{% endif %}>Mr.</option>
+                          <option value="Mrs." {% if profile.title == 'Mrs.' %}selected{% endif %}>Mrs.</option>
+                          <option value="Miss." {% if profile.title == 'Miss.' %}selected{% endif %}>Miss.</option>
+                          <option value="Ms." {% if profile.title == 'Ms.' %}selected{% endif %}>Ms.</option>
+                        </select>
+                      </div>
+                    </div>
+                                        
+                    <div class="row mb-3">
+                      <label for="first_name" class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="first_name" type="text" class="form-control" id="first_name" value="{{ profile.first_name }}" required pattern="[A-Za-z ]+" title="First name must only contain letters and spaces.">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="last_name" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="last_name" type="text" class="form-control" id="last_name" value="{{ profile.last_name }}" required pattern="[A-Za-z ]+" title="Last name must only contain letters and spaces">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="gardening_experience" class="col-md-4 col-lg-3 col-form-label">About</label>
+                      <div class="col-md-8 col-lg-9">
+                        <textarea name="gardening_experience" class="form-control" id="gardening_experience" style="height: 100px">{{ profile.gardening_experience }}</textarea>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="position" class="col-md-4 col-lg-3 col-form-label">Position</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="position" type="text" class="form-control" id="position" value="{{ profile.position }}" required pattern="[A-Za-z ]+" title="Position must contain only letters.">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="phone_number" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="phone_number" type="tel" class="form-control" id="phone_number" value="{{ profile.phone_number }}" required pattern="[\d\-]+" minlength="6" maxlength="11" title="Phone number must only contain numbers and hyphens.">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="email" type="email" class="form-control" id="email" value="{{ profile.email }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="address" type="text" class="form-control" id="address" value="{{ profile.address }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="dateOfBirth" class="col-md-4 col-lg-3 col-form-label">Date Of Birth</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="date_of_birth" type="date" class="form-control" id="date_of_birth" value="{{ profile.date_of_birth }}" required>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form><!-- End Profile Edit Form -->
+                  
+                  {% elif session['role'] == 'Instructor' %}
+                  <div class="row mb-3">
+                    <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                    <div class="col-md-8 col-lg-9">
+                      {% if profile.profile_image %}
+                      <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Profile Image">
+                      {% elif profile.filename and profile.image_status=='Active' %}
+                        <!-- Use an img tag for consistent styling -->
+                        <img src="{{ url_for('static', filename='assets/img/' ~ profile.filename) }}" class="img-fluid" alt="Profile Image" style="object-fit: cover;">
+                      {% else %}
+                        <img src="{{ url_for('static', filename='assets/img/profile-img.png') }}" class="img-fluid" alt="Profile Image">
+                      {% endif %}
+                      <div class="pt-2">    
+                        <form action="{{ url_for('account_page.upload_primary_image', user_id=profile.user_id) }}" method="post" enctype="multipart/form-data" class="pt-2">
+                          <input type="file" name="image" id="image" style="display: none;" onchange="form.submit()">
+                          <label for="image" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></label>
+                        </form>
+                          <form action="{{ url_for('account_page.delete_image', user_id=profile.user_id) }}" method="post" class="d-inline">
+                          <button type="submit" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <form action="{{ url_for('account_page.profile') }}" method="POST">                    
+                    <div class="row mb-3">
+                      <label for="title" class="col-md-4 col-lg-3 col-form-label">Title</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="title" class="form-select" id="title">
+                          <option value="Mr." {% if profile.title == 'Mr.' %}selected{% endif %}>Mr.</option>
+                          <option value="Mrs." {% if profile.title == 'Mrs.' %}selected{% endif %}>Mrs.</option>
+                          <option value="Miss." {% if profile.title == 'Miss.' %}selected{% endif %}>Miss.</option>
+                          <option value="Ms." {% if profile.title == 'Ms.' %}selected{% endif %}>Ms.</option>
+                        </select>
+                      </div>
+                    </div>
+                                        
+                    <div class="row mb-3">
+                      <label for="first_name" class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="first_name" type="text" class="form-control" id="first_name" value="{{ profile.first_name }}" required pattern="[A-Za-z ]+" title="First name must only contain letters and spaces.">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="last_name" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="last_name" type="text" class="form-control" id="last_name" value="{{ profile.last_name }}" required pattern="[A-Za-z ]+" title="Last name must only contain letters and spaces">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="gardening_experience" class="col-md-4 col-lg-3 col-form-label">About</label>
+                      <div class="col-md-8 col-lg-9">
+                        <textarea name="gardening_experience" class="form-control" id="gardening_experience" style="height: 100px">{{ profile.instructor_profile }}</textarea>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="position" class="col-md-4 col-lg-3 col-form-label">Position</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="position" type="text" class="form-control" id="position" value="{{ profile.position }}" required pattern="[A-Za-z ]+" title="Position must contain only letters.">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="phone_number" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="phone_number" type="tel" class="form-control" id="phone_number" value="{{ profile.phone_number }}" required pattern="[\d\-]+" minlength="6" maxlength="11" title="Phone number must only contain numbers and hyphens.">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="email" type="email" class="form-control" id="email" value="{{ profile.email }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="address" type="text" class="form-control" id="address" value="{{ profile.address }}" required>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form><!-- End Profile Edit Form -->
+                  
+                  {% elif session['role'] == 'Manager' %}
+                  <div class="row mb-3">
+                    <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                    <div class="col-md-8 col-lg-9">
+                      {% if profile.profile_image %}
+                      <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Profile Image">
+                      {% elif profile.filename and profile.image_status=='Active' %}
+                        <!-- Use an img tag for consistent styling -->
+                        <img src="{{ url_for('static', filename='assets/img/' ~ profile.filename) }}" class="img-fluid" alt="Profile Image" style="object-fit: cover;">
+                      {% else %}
+                        <img src="{{ url_for('static', filename='assets/img/profile-img.png') }}" class="img-fluid" alt="Profile Image">
+                      {% endif %}
+
+                      <div class="pt-2">    
+                        <form action="{{ url_for('account_page.upload_primary_image', user_id=profile.user_id) }}" method="post" enctype="multipart/form-data" class="pt-2">
+                          <input type="file" name="image" id="image" style="display: none;" onchange="form.submit()">
+                          <label for="image" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></label>
+                        </form>
+                          <form action="{{ url_for('account_page.delete_image', user_id=profile.user_id) }}" method="post" class="d-inline">
+                          <button type="submit" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></button>
+                        </form>
+                      </div>
+                    </div>
+
+                  </div>
+                  <form action="{{ url_for('account_page.profile') }}" method="POST">                    
+                    <div class="row mb-3">
+                      <label for="title" class="col-md-4 col-lg-3 col-form-label">Title</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="title" class="form-select" id="title">
+                          <option value="Mr." {% if profile.title == 'Mr.' %}selected{% endif %}>Mr.</option>
+                          <option value="Mrs." {% if profile.title == 'Mrs.' %}selected{% endif %}>Mrs.</option>
+                          <option value="Miss." {% if profile.title == 'Miss.' %}selected{% endif %}>Miss.</option>
+                          <option value="Ms." {% if profile.title == 'Ms.' %}selected{% endif %}>Ms.</option>
+                        </select>
+                      </div>
+                    </div>
+                                        
+                    <div class="row mb-3">
+                      <label for="first_name" class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="first_name" type="text" class="form-control" id="first_name" value="{{ profile.first_name }}" required pattern="[A-Za-z ]+" title="First name must only contain letters and spaces.">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="last_name" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="last_name" type="text" class="form-control" id="last_name" value="{{ profile.last_name }}" required pattern="[A-Za-z ]+" title="Last name must only contain letters and spaces">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="position" class="col-md-4 col-lg-3 col-form-label">Position</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="position" type="text" class="form-control" id="position" value="{{ profile.position }}" required pattern="[A-Za-z ]+" title="Position must contain only letters.">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="phone_number" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="phone_number" type="tel" class="form-control" id="phone_number" value="{{ profile.phone_number }}" required pattern="[\d\-]+" minlength="6" maxlength="11" title="Phone number must only contain numbers and hyphens.">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="email" type="email" class="form-control" id="email" value="{{ profile.email }}" required>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form><!-- End Profile Edit Form -->
+
+                {% endif %}
+
+                </div>
+
+                <div class="tab-pane fade pt-3" id="profile-change-password">
+                  <!-- Change Password Form -->
+                  <form action="{{ url_for('account_page.change_password') }}" method="POST" onsubmit="return validatePasswords()">
+                    <div class="row mb-3">
+                      <label for="old_password" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="old_password" type="password" class="form-control" id="old_password" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="new_password" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="new_password" type="password" class="form-control" id="new_password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and have a mix of character types.">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="confirm_password" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="confirm_password" type="password" class="form-control" id="confirm_password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and have a mix of character types.">
+                        <!-- Span element for displaying error message -->
+                        <span id="passwordMismatch" style="color: red; display: none;">New password cannot be the same as old password.</span>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Change Password</button>
+                    </div>
+                  </form><!-- End Change Password Form -->
+
+                </div>
+
+              </div><!-- End Bordered Tabs -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+{% endblock %}

@@ -1,0 +1,176 @@
+{% if session.loggedin %}
+    {% extends 'layout.html' %}
+{% else %}
+    {% extends 'base.html' %}
+{% endif %}
+
+{% block title %}Timetable{% endblock %}
+
+{%block extra_css %}
+    <!-- Calendar File -->
+  <style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        font-size: 14px;
+    }
+  
+    #calendar {
+        max-width: 1100px;
+        margin: 40px auto;
+    }
+    
+    .fc-event.lesson {
+        background-color: #6ac6ac;
+        color: #FFFFFF;
+        border: none;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        white-space: pre-wrap;
+    }
+    
+    .fc-event.workshop {
+        background-color: #20493c;
+        color: #FFFFFF;
+        border: none;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        white-space: pre-wrap;
+    }
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999; /* Ensure the modal is on top */
+    }
+    
+    .modal-content {
+        background-color: #FFF;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    </style>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            timeZone: 'UTC',
+            initialView: 'dayGridMonth',
+            events: '/timetable/get_course_info',
+            editable: true,
+            selectable: true,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            eventContent: function(arg) {
+            // Use a function to determine the class based on event properties
+            var className = arg.event.extendedProps.type === 'lesson' ? 'lesson' : 'workshop';
+
+            // Create an element and apply the class
+            var element = document.createElement('div');
+            element.classList.add('fc-event', className);
+            element.innerHTML = `<span>${arg.event.title}</span>`;
+            return { domNodes: [element] };
+            },
+            eventClick: function(info) {
+                var eventObj = info.event.extendedProps; // Access extended properties
+                var eventTitle = info.event.title;
+                var eventStart = info.event.start;
+                var eventEnd = info.event.end;
+                var eventID = info.event.id; // Access the event ID
+                var eventType = info.event.extendedProps.type; // Access the event type
+                
+                // Close any existing modal first
+                var existingModal = document.querySelector('.modal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+
+                // Check if eventID and eventType are defined
+            if (typeof eventID !== 'undefined' && eventType) {
+                // Determine the URL based on event type
+                var detailUrl = eventType === 'lesson' ? 
+                    `/schedule/lesson_detail/${eventID}` : 
+                    `/workshop/${eventID}`;
+
+                // Generate the modal content
+                var modalContent = `
+                    <div class="modal-content">
+                        <h4>${eventTitle}</h4>
+                        <p>Start: ${eventStart.toLocaleString()}</p>
+                        <p>End: ${eventEnd.toLocaleString()}</p>
+                        <button onclick="closeModal()">Close</button>
+                        <a href="${detailUrl}" class="btn btn-success">View Details</a>
+                    </div>
+                `;
+
+                // Create and display the modal
+                var modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML = modalContent;
+                document.body.appendChild(modal);
+            } else {
+                console.error('Event ID or type is undefined', info.event);
+                alert('There was an error processing this event. Please try again.');
+            }
+        }
+        });
+
+        calendar.render();
+    });
+
+function closeModal() {
+    var modal = document.querySelector('.modal');
+    if (modal) {
+        modal.parentNode.removeChild(modal);
+    }
+}
+    </script>
+{%endblock%}
+
+{% block content %}
+    
+    <main id="main" class="main">
+        {% if loggedin %}
+        <div class="pagetitle">
+            <h1>Timetable</h1>
+            <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item active">Timetable</li>
+            </ol>
+            </nav>
+        </div><!-- End Page Title -->
+        {% endif %}
+        
+        <section class="section">
+            <div id='calendar'></div>
+        </section>
+    </main>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+{% endblock %}
+

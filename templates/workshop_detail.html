@@ -1,0 +1,494 @@
+{% if session.loggedin %}
+    {% extends 'layout.html' %}
+{% else %}
+    {% extends 'base.html' %}
+{% endif %}
+
+{% block title %}Workshops{% endblock %}
+
+{% block content %}
+
+{% if session.loggedin %}
+  <main id="main" class="main">
+    
+    <div class="pagetitle">
+      <h1>Workshop Details</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('workshop_page.workshop_list') }}">Workshops</a></li>
+          <li class="breadcrumb-item active"><a href="">Workshop Details</a></li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section profile">
+      <div class="row h-100">
+        <div class="col-xl-4">
+          <div class="card h-100">
+            {% if workshop.workshop_image %}
+            <div class="card-body profile-card" style="background: url('data:image/jpeg;base64,{{ image_data }}') no-repeat center center; background-size: cover;"></div>
+            {% elif workshop.image_filename and workshop.image_status == 'Active' %}
+            <div class="card-body profile-card" style="background: url('{{ url_for('static', filename='assets/img/' ~ workshop.image_filename) }}') no-repeat center center; background-size: cover;"></div>
+            {% else %}
+            <div class="card-body profile-card" style="background: url('{{ url_for('static', filename='assets/img/no_image.jpg') }}') no-repeat center center; background-size: cover;"></div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-xl-8">
+
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#workshop-overview">Overview</button>
+                </li>
+                
+                {% if session['role'] == 'Instructor' or session['role'] == 'Manager' %}
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#instructor">Instructor</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#participant">Participants</button>
+                </li>
+                {% endif %}
+                  
+                {% if session['role'] == 'Manager' %}
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#workshop-edit">Edit Workshop</button>
+                </li>
+                {% endif %}
+
+                {% if session['role'] == 'Member' %}
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#instructor">Instructor</button>
+                </li>
+                {% endif %}
+              </ul>
+              
+              <div class="tab-content pt-2">
+                
+                <!-- Workshop Overview -->
+                <div class="tab-pane fade show active profile-overview" id="workshop-overview">
+                  <h5 class="card-title">{{ workshop.title }} 
+                    {% if workshop.date < today %}
+                      <span class="badge bg-secondary text-white">Closed</span>
+                    {% elif workshop.slots == 0 %}
+                      <span class="badge bg-danger text-white">Fully Booked</span>
+                    {% elif workshop.slots <= 5 %}
+                      <span class="badge bg-warning text-white">Limited Slots</span>
+                    {% else %}
+                      <span class="badge bg-success text-white">Available</span>
+                    {% endif %}
+                  </h5>
+
+                  <p class="small fst-italic"> {{ workshop.details }}</p>
+                  
+                  <h5 class="card-title">Workshop Details</h5>
+                  
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Instructor</div>
+                    <div class="col-lg-9 col-md-8"> {{ instructor.title }} {{ instructor.first_name }} {{ instructor.last_name }} </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Location</div>
+                    <div class="col-lg-9 col-md-8"> {{ workshop.location_name }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Date</div>
+                    <div class="col-lg-9 col-md-8"> {{ workshop.date }}</div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Start Time</div>
+                    <div class="col-lg-9 col-md-8"> {{ workshop.start_time }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">End Time</div>
+                    <div class="col-lg-9 col-md-8">  {{ workshop.end_time }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Type</div>
+                    <div class="col-lg-9 col-md-8"> {{ workshop.type }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Price</div>
+                    <div class="col-lg-9 col-md-8"> ${{ workshop.price }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Slots</div>
+                    <div class="col-lg-9 col-md-8"> {{ workshop.slots }} Slots</div>
+                  </div>
+
+                  {% if session['role'] == 'Manager' %}
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Capacity Limit</div>
+                    <div class="col-lg-9 col-md-8"> {{ workshop.capacity }} Slots</div>
+                  </div>
+                  {% endif %}
+
+
+                  {% if session['role'] == 'Member' and workshop.date >= today %}
+                  <div class="text-end">
+                      {% if joined.status == 'Reserved' %}
+                          <form action="{{ url_for('workshop_page.cancel_booking', workshop_id=workshop.workshop_id) }}" method="post">
+                              <button type="submit" class="btn btn-primary btn-sm">Cancel Registration </button>
+                          </form>
+                      {% else %}
+                          <form action="{{ url_for('workshop_page.book_workshop', workshop_id=workshop.workshop_id) }}" method="post">
+                              <button type="submit" class="btn btn-primary btn-sm">Register</button>
+                          </form>
+                      {% endif %}
+                  </div>
+                  {% endif %}
+                  
+                  
+                </div><!-- End Workshop Overview -->
+
+                <!-- Instructor -->
+
+                <div class="tab-pane fade profile-overview" id="instructor">
+                  <h5 class="card-title">{{ instructor.title}} {{ instructor.first_name }} {{ instructor.last_name }}</h5>
+        
+                  <p class="small fst-italic"> {{ instructor.instructor_profile }}</p>
+                  
+                  <h5 class="card-title">Instructor Details</h5>
+                    
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Position</div>
+                    <div class="col-lg-9 col-md-8"> {{ instructor.position }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Phone</div>
+                    <div class="col-lg-9 col-md-8"> {{ instructor.phone_number }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Email</div>
+                    <div class="col-lg-9 col-md-8"> {{ instructor.email }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Address</div>
+                    <div class="col-lg-9 col-md-8"> {{ instructor.address }}</div>
+                  </div>
+                  
+                </div><!-- End instructor --> 
+
+                {% if session['role'] == 'Instructor' or session['role'] == 'Manager' %}
+                <!-- Participant -->
+
+                <div class="tab-pane fade profile-overview" id="participant">
+                  {% if participants %}
+                  <h5 class="card-title">Participants</h5>
+                  <table class="table table-hover datatable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone Number</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participant in participants %}
+                            <tr>
+                                <td> {{participant.title }} {{ participant.first_name }} {{ participant.last_name }}</td>
+                                <td> {{ participant.phone_number }}</td>
+                                <td> {{ participant.email }}</td>
+                                <td>
+                                    <span class="badge {% if participant.status == 'Reserved' %}bg-success{% elif participant.status == 'Cancelled' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                        {{ participant.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <h5 class="card-title"> No Participant Yet.</h5>
+                  {% endif %}
+                </div><!-- End participant --> 
+                {% endif %}
+
+                {% if session['role'] == 'Manager' %}
+
+              <!-- Edit Workshop -->
+              <div class="tab-pane fade profile-edit" id="workshop-edit">  
+                <div class="row mb-3">
+                  <label for="workshopImage" class="col-md-4 col-lg-3 col-form-label">Workshop Image</label>
+                  <div class="col-md-8 col-lg-9">
+                      {% if workshop.workshop_image %}
+                      <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Workshop Image">
+                      {% elif workshop.image_filename and workshop.image_status == 'Active' %}
+                      <img src="{{ url_for('static', filename='assets/img/' ~ workshop.image_filename) }}" class="img-fluid" alt="Workshop Image" style="object-fit: cover;">
+                      {% else %}
+                      <img src="{{ url_for('static', filename='assets/img/no_image.jpg') }}" class="img-fluid" alt="Workshop Image">
+                      {% endif %}
+                      <div class="pt-2">
+                          <form action="{{ url_for('workshop_page.upload_workshop_image', workshop_id=workshop.workshop_id) }}" method="post" enctype="multipart/form-data" class="pt-2">
+                              <input type="file" name="image" id="image" style="display: none;" onchange="form.submit()">
+                              <label for="image" class="btn btn-primary btn-sm" title="Upload new workshop image"><i class="bi bi-upload"></i></label>
+                          </form>
+                          <form action="{{ url_for('workshop_page.delete_workshop_image', workshop_id=workshop.workshop_id) }}" method="post" class="d-inline">
+                              <button type="submit" class="btn btn-danger btn-sm" title="Remove workshop image"><i class="bi bi-trash"></i></button>
+                          </form>
+                      </div>
+                  </div>
+                  <form action="{{ url_for('workshop_page.edit_workshop', workshop_id=workshop.workshop_id) }}" method="POST">       
+
+                    <div class="row mb-3">
+                      <label for="name" class="col-md-4 col-lg-3 col-form-label">Workshop Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="name" type="text" class="form-control" id="name" value="{{ workshop.title }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="details" class="col-md-4 col-lg-3 col-form-label">Details</label>
+                      <div class="col-md-8 col-lg-9">
+                        <textarea name="details" class="form-control" id="details" rows="2" required>{{ workshop.details }}</textarea>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="instructor_id" class="col-md-4 col-lg-3 col-form-label">Instructor</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="instructor_id" class="form-select" id="instructor_id">
+                          {% for instructor in instructors %}
+                            <option value="{{ instructor.instructor_id }}" {% if instructor.instructor_id == workshop.instructor_id %}selected{% endif %}>{{ instructor.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="location_id" class="col-md-4 col-lg-3 col-form-label">Location</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="location_id" class="form-select" id="location_id">
+                          {% for location in locations %}
+                            <option value="{{ location.location_id }}" {% if location.location_id == workshop.location_id %}selected{% endif %}>{{ location.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="date" class="col-md-4 col-lg-3 col-form-label">Date</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="date" type="date" class="form-control" id="date" value="{{ workshop.date }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="start_time" class="col-md-4 col-lg-3 col-form-label">Start Time</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="start_time" type="time" class="form-control" id="start_time" value="{{ workshop.start_time }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="end_time" class="col-md-4 col-lg-3 col-form-label">End Time</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="end_time" type="time" class="form-control" id="end_time" value="{{ workshop.end_time }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="type" class="col-md-4 col-lg-3 col-form-label">Type</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="type" class="form-select" id="type">
+                          {% for type in workshop_types %}
+                            <option value="{{ type.type }}" {% if type.type == workshop.type %}selected{% endif %}>{{ type.type }}</option>
+                          {% endfor %}
+                        </select>
+                      </div> 
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="price" class="col-md-4 col-lg-3 col-form-label">Price/h</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="price" type="number" class="form-control" id="price" value="{{ workshop.price }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="capacity" class="col-md-4 col-lg-3 col-form-label">Capacity</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="capacity" type="number" class="form-control" id="capacity" value="{{ workshop.capacity }}" required>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+                    </div>
+                    
+                  </form><!-- End Profile Edit Form -->
+                {% endif %}
+                </div><!-- End Lesson Overview -->
+
+              </div><!-- End Bordered Tabs -->
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+{% else%}
+
+<section class="section profile">
+  <div class="row h-100">
+    <div class="col-xl-4">
+      <div class="card h-100">
+        {% if workshop.workshop_image %}
+        <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid" alt="Workshop Image">
+        {% elif workshop.image_filename and workshop.image_status == 'Active' %}
+        <img src="{{ url_for('static', filename='assets/img/' ~ workshop.image_filename) }}" class="img-fluid" alt="Workshop Image" style="object-fit: cover;">
+        {% else %}
+        <img src="{{ url_for('static', filename='assets/img/profile-img.png') }}" class="img-fluid" alt="Workshop Image">
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-xl-8">
+
+      <div class="card">
+        <div class="card-body pt-3">
+          <!-- Bordered Tabs -->
+          <ul class="nav nav-tabs nav-tabs-bordered">
+
+            <li class="nav-item">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#workshop-overview">Overview</button>
+            </li>
+            
+            {% if session['role'] == 'Instructor' or session['role'] == 'Manager' %}
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#participant">Participant</button>
+            </li>
+
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#workshop-edit">Edit Workshop</button>
+            </li>
+
+            {% else %}
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#instructor">Instructor</button>
+            </li>
+            {% endif %}
+          </ul>
+          
+          <div class="tab-content pt-2">
+            
+            <!-- Workshop Overview -->
+            <div class="tab-pane fade show active profile-overview" id="workshop-overview">
+              <h5 class="card-title">{{ workshop.title }} 
+                {% if workshop.date < today %}
+                  <span class="badge bg-secondary text-white">Closed</span>
+                {% elif workshop.capacity == 0 %}
+                  <span class="badge bg-danger text-white">Fully Booked</span>
+                {% elif workshop.capacity <= 5 %}
+                  <span class="badge bg-warning text-white">Limited Slots</span>
+                {% else %}
+                  <span class="badge bg-success text-white">Available</span>
+                {% endif %}
+              </h5>
+
+              <p class="small fst-italic"> {{ workshop.details }}</p>
+              
+              <h5 class="card-title">Workshop Details</h5>
+              
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label ">Instructor</div>
+                <div class="col-lg-9 col-md-8"> {{ instructor.title }} {{ instructor.first_name }} {{ instructor.last_name }} </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label ">Location</div>
+                <div class="col-lg-9 col-md-8"> {{ workshop.location_name }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label ">Date</div>
+                <div class="col-lg-9 col-md-8"> {{ workshop.date }}</div>
+              </div>
+              
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label ">Start Time</div>
+                <div class="col-lg-9 col-md-8"> {{ workshop.start_time }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label">End Time</div>
+                <div class="col-lg-9 col-md-8">  {{ workshop.end_time }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label">Type</div>
+                <div class="col-lg-9 col-md-8"> {{ workshop.type }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label">Price</div>
+                <div class="col-lg-9 col-md-8"> ${{ workshop.price }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label">Capacity</div>
+                <div class="col-lg-9 col-md-8"> {{ workshop.capacity }} Slots</div>
+              </div>
+              
+            </div><!-- End Workshop Overview -->
+
+            <!-- Instructor -->
+
+            <div class="tab-pane fade profile-overview" id="instructor">
+              <h5 class="card-title">{{ instructor.title}} {{ instructor.first_name }} {{ instructor.last_name }}</h5>
+    
+              <p class="small fst-italic"> {{ instructor.instructor_profile }}</p>
+              
+              <h5 class="card-title">Instructor Details</h5>
+                
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label ">Position</div>
+                <div class="col-lg-9 col-md-8"> {{ instructor.position }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label ">Phone</div>
+                <div class="col-lg-9 col-md-8"> {{ instructor.phone_number }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label ">Email</div>
+                <div class="col-lg-9 col-md-8"> {{ instructor.email }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label ">Address</div>
+                <div class="col-lg-9 col-md-8"> {{ instructor.address }}</div>
+              </div>
+              
+            </div><!-- End instructor --> 
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endif %}
+
+{% endblock %}

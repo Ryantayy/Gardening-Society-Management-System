@@ -1,0 +1,113 @@
+{% extends 'layout.html' %}
+
+{% block title %}Workshops{% endblock %}
+
+{% block content %}
+
+
+<main id="main" class="main">
+    <div class="pagetitle">
+      {% if session['role'] == 'Member' %}
+      <h1>Book Workshops</h1>
+      {% elif session['role'] == 'Manager' or session['role'] == 'Instructor' %}
+      <h1>Manage Workshops</h1>
+      {% endif %}
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item active">Workshops</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+  
+    <section class="section">
+
+    <div class="row gy-2 gx-3 align-items-center">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Workshops</h5>
+              <div>
+                {% if session['role'] == 'Manager' %}
+                <div class="mb-3">
+                <a href="{{url_for('workshop_page.new_workshop')}}" class="btn btn-sm btn-primary">New Workshop</a>
+                </div>
+                {% endif %}
+              </div>
+             
+              <!-- Workshop Table -->
+              <table class="table table-hover datatable">
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Instructor</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Start Time</th>
+                    <th scope="col">End Time</th>
+                    <th scope="col">Slots </th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Status</th>
+                    
+                    {% if session['role'] == 'Manager' or session['role'] == 'Instructor' %}
+
+                    <th scope="col">Action</th>
+                    {% endif %}
+  
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for workshop in workshops %}
+                  <tr>
+                    <td><a href="/workshop/{{workshop.workshop_id}}" style="color:#009688;">{{ workshop.title }}</a></td>
+                    <td>{{ workshop.instructor_name }}</td>
+                    <td>{{ workshop.type }}</td>
+                    <td>{{ workshop.date }}</td>
+                    <td>{{ workshop.start_time }}</td>
+                    <td>{{ workshop.end_time }}</td>
+                    <td>{{ workshop.slots }}</td>
+                    <td>${{ workshop.price }}</td>
+                    <td>{{ workshop.location }}</td>
+                    {% if workshop.date < today %}
+                      <td><span class="badge bg-secondary text-white">Closed</span></td>
+                    {% elif workshop.slots == 0 %}
+                      <td><span class="badge bg-danger text-white">Fully Booked</span></td>
+                    {% elif workshop.slots <= 5 %}
+                      <td><span class="badge bg-warning text-white">Limited Slots</span></td>
+                    {% else %}
+                      <td><span class="badge bg-success text-white">Available</span></td>
+                    {% endif %}
+  
+                    {% if session['role'] == 'Manager' or session['role'] == 'Instructor' %}
+                    <td>
+                      {% if workshop.date >= today %}
+                        <form action="{{url_for('workshop_page.delete_workshop', workshop_id = workshop.workshop_id)}}" method="post" onsubmit="return confirm('Are you sure you want to delete this lesson?');">
+                            <input type="submit" class="btn btn-sm btn-danger" value="Delete"/>
+                        </form>
+                      {% endif %}
+                    </td>
+                    {% endif %}
+                  </tr>
+                  {% else %}
+                  <tr>
+                    {% if session['role'] == 'Manager' or session['role'] == 'Instructor' %}
+                    <td colspan="6">No workshop to manage.</td>
+                    {% else %}
+                    <td colspan="6">No workshop available.</td>
+                    {% endif %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Workshop Table -->
+  
+
+            </div>
+          </div>
+
+        </div>
+    </section>
+  </main>
+
+{% endblock %}

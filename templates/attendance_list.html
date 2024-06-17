@@ -1,0 +1,71 @@
+{% extends 'layout.html' %}
+
+{% block title %}Attendance{% endblock %}
+
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Attendance Sheet</h1>
+        <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/account/dashboard">Home</a></li>
+            <li class="breadcrumb-item active">Attendance</li>
+        </ol>
+        </nav>
+    </div>
+    {% if role == "Manager" %}
+    <div>
+      <a href="{{url_for('manage_page.attendance_report')}}" class="btn btn-success">Past Attendance</a>
+    </div>
+    {% endif %}
+    <section class="section">
+        <div class="row">
+            <h4 class="card-title">Workshops</h4>
+            {% for workshop in workshops %}
+            <div class="col-xxl-4 col-md-6">
+                <div class="card info-card sales-card">                    
+                    <div class="card-body">
+                      <h5 class="card-title">{{workshop.title}}</h5>
+                      <span class="text-success small pt-1 fw-bold">{{workshop.date}}</span><br>
+                      <span class="text-success small pt-1 fw-bold">{{workshop.start_time}} - {{workshop.end_time}}</span><br>
+                      <span class="text-success small pt-1 fw-bold">{{workshop.name}}</span><br>
+                      <span class="text-success small pt-1 fw-bold">{{workshop.instructor}}</span>
+                      <div class="d-flex align-items-center mt-3">
+                        <a href="{{url_for('manage_page.attendance_workshop', wid=workshop.workshop_id)}}" class="btn btn-primary">Student List</a>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="row">
+            <h4 class="card-title">Lessons</h4>
+            {% for lesson in lessons %}
+            <div class="col-xxl-4 col-md-6">
+                <div class="card info-card sales-card">                    
+                    <div class="card-body">
+                      <h5 class="card-title">{{lesson.name}}</h5>
+                      <span class="text-success small pt-1 fw-bold">{{lesson.date}}</span><br>
+                      <span class="text-success small pt-1 fw-bold">{{lesson.start_time}} - {{lesson.end_time}}</span><br>
+                      <span class="text-success small pt-1 fw-bold">{{lesson.location}}</span><br>
+                      <span class="text-success small pt-1 fw-bold">Member ID: {{lesson.member_id}}</span><br>
+                      <span class="text-success small pt-1 fw-bold">Name: {{lesson.title}} {{lesson.first_name}} {{lesson.last_name}}</span>    
+                      <div class="d-flex align-items-center mt-3">
+                        <form action="{{url_for('manage_page.lesson_attend', lid=lesson.lesson_id)}}" method="post" class="form-inline" style="float: right;">
+                            {% if lesson.status == "Reserved" %}
+                            <input type="submit" class="btn btn-primary" value="Take attendance"/>
+                            {% elif  lesson.status == "Completed"%}
+                            <input type="submit" class="btn btn-success" value="Attendance taken" disabled />
+                            {% else%}
+                            <input type="submit" class="btn btn-secondary" value="N/A" disabled />
+                            {% endif %}
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+{% endblock %}

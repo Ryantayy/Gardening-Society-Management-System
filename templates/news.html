@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}News{% endblock %}
+
+{% block content %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>News</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('account_page.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item active">News</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    
+    <!-- News -->
+    <section class="section">
+      <div class="card mb-3">
+        <div class="row g-0">
+          <div class="col-md-4">
+            {% if image_data %}
+            <img src="data:image/jpeg;base64,{{ image_data }}" class="img-fluid rounded-start" alt="News Image">
+            {% else %}
+            <img src="{{ url_for('static', filename='assets/img/news-placeholder.png') }}" class="img-fluid rounded-start" alt="News Image">
+            {% endif %}
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title"> {{ news.title }} <span> | {{news.date_published}}</span></h5>
+              <p class="card-text">{{ news.content }}</p>
+            </div>
+          </div>
+        </div>
+      </div><!-- End News -->
+    </section>
+  
+  </main><!-- End #main -->
+
+{% endblock %}
